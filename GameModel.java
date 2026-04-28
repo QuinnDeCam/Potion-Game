@@ -17,7 +17,24 @@ public class GameModel {
         BREWING_ROOM
     }
     
+    // Ingredient types
+    public enum Ingredient {
+        MUSHROOM,
+        LEAF,
+        CRYSTAL
+    }
+    
     private Room currentRoom = Room.FOREST;
+    
+    // Ingredient inventory
+    private int mushroomCount = 0;
+    private int leafCount = 0;
+    private int crystalCount = 0;
+    
+    // Forest ingredients (position and collected state)
+    private boolean mushroomCollected = false;
+    private boolean leafCollected = false;
+    private boolean crystalCollected = false;
     
     // TODO: Player data
     // - Player position (x, y coordinates)
@@ -46,5 +63,56 @@ public class GameModel {
     
     public void setCurrentRoom(Room room) {
         this.currentRoom = room;
+    }
+    
+    // Ingredient management
+    public int getIngredientCount(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: return mushroomCount;
+            case LEAF: return leafCount;
+            case CRYSTAL: return crystalCount;
+            default: return 0;
+        }
+    }
+    
+    public void addIngredient(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: mushroomCount++; break;
+            case LEAF: leafCount++; break;
+            case CRYSTAL: crystalCount++; break;
+        }
+    }
+    
+    // Forest ingredient collection
+    public boolean isIngredientCollected(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: return mushroomCollected;
+            case LEAF: return leafCollected;
+            case CRYSTAL: return crystalCollected;
+            default: return false;
+        }
+    }
+    
+    public void collectIngredient(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: 
+                if (!mushroomCollected) {
+                    mushroomCollected = true;
+                    addIngredient(Ingredient.MUSHROOM);
+                }
+                break;
+            case LEAF: 
+                if (!leafCollected) {
+                    leafCollected = true;
+                    addIngredient(Ingredient.LEAF);
+                }
+                break;
+            case CRYSTAL: 
+                if (!crystalCollected) {
+                    crystalCollected = true;
+                    addIngredient(Ingredient.CRYSTAL);
+                }
+                break;
+        }
     }
 }

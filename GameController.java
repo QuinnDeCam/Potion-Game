@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * GameController - Main controller for the MVC architecture
@@ -16,6 +18,7 @@ public class GameController {
         view = new GameView(model);
         
         setupFrame();
+        setupMouseListener();
     }
     
     private void setupFrame() {
@@ -55,6 +58,33 @@ public class GameController {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+    
+    private void setupMouseListener() {
+        view.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (model.getCurrentRoom() == GameModel.Room.FOREST) {
+                    Point click = e.getPoint();
+                    
+                    // Check if clicked on mushroom
+                    if (view.getMushroomBounds().contains(click)) {
+                        model.collectIngredient(GameModel.Ingredient.MUSHROOM);
+                        view.repaint();
+                    }
+                    // Check if clicked on leaf
+                    else if (view.getLeafBounds().contains(click)) {
+                        model.collectIngredient(GameModel.Ingredient.LEAF);
+                        view.repaint();
+                    }
+                    // Check if clicked on crystal
+                    else if (view.getCrystalBounds().contains(click)) {
+                        model.collectIngredient(GameModel.Ingredient.CRYSTAL);
+                        view.repaint();
+                    }
+                }
+            }
+        });
     }
     
     public static void main(String[] args) {

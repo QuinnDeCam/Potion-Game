@@ -9,11 +9,21 @@ public class GameView extends JPanel {
     
     private GameModel model;
     
+    // Ingredient positions in Forest
+    private Rectangle mushroomBounds = new Rectangle(200, 420, 50, 50);
+    private Rectangle leafBounds = new Rectangle(450, 440, 50, 50);
+    private Rectangle crystalBounds = new Rectangle(650, 400, 50, 50);
+    
     public GameView(GameModel model) {
         this.model = model;
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.DARK_GRAY);
     }
+    
+    // Getters for ingredient bounds (used by controller for click detection)
+    public Rectangle getMushroomBounds() { return mushroomBounds; }
+    public Rectangle getLeafBounds() { return leafBounds; }
+    public Rectangle getCrystalBounds() { return crystalBounds; }
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -30,8 +40,26 @@ public class GameView extends JPanel {
         int centerX = (getWidth() - titleWidth) / 2;
         g.drawString(roomName, centerX, 60);
         
+        // Draw inventory display
+        drawInventory(g);
+        
         // Draw room-specific visual
         drawRoomVisual(g, currentRoom);
+    }
+    
+    private void drawInventory(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setColor(Color.WHITE);
+        
+        int inventoryX = 20;
+        int inventoryY = 80;
+        
+        g.drawString("Inventory:", inventoryX, inventoryY);
+        
+        g.setFont(new Font("Arial", Font.PLAIN, 16));
+        g.drawString("Mushrooms: " + model.getIngredientCount(GameModel.Ingredient.MUSHROOM), inventoryX, inventoryY + 25);
+        g.drawString("Leaves: " + model.getIngredientCount(GameModel.Ingredient.LEAF), inventoryX, inventoryY + 50);
+        g.drawString("Crystals: " + model.getIngredientCount(GameModel.Ingredient.CRYSTAL), inventoryX, inventoryY + 75);
     }
     
     private String getRoomDisplayName(GameModel.Room room) {
@@ -80,6 +108,52 @@ public class GameView extends JPanel {
         // Draw sun
         g.setColor(Color.YELLOW);
         g.fillOval(650, 50, 80, 80);
+        
+        // Draw collectible ingredients (if not collected)
+        drawIngredient(g, GameModel.Ingredient.MUSHROOM, mushroomBounds);
+        drawIngredient(g, GameModel.Ingredient.LEAF, leafBounds);
+        drawIngredient(g, GameModel.Ingredient.CRYSTAL, crystalBounds);
+    }
+    
+    private void drawIngredient(Graphics g, GameModel.Ingredient ingredient, Rectangle bounds) {
+        if (model.isIngredientCollected(ingredient)) {
+            return; // Don't draw if already collected
+        }
+        
+        switch (ingredient) {
+            case MUSHROOM:
+                // Red mushroom cap
+                g.setColor(new Color(200, 50, 50));
+                g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height / 2);
+                // White stem
+                g.setColor(Color.WHITE);
+                g.fillRect(bounds.x + 15, bounds.y + 25, 20, 25);
+                break;
+            case LEAF:
+                // Green leaf
+                g.setColor(new Color(50, 200, 50));
+                g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
+                g.setColor(new Color(100, 150, 50));
+                g.drawLine(bounds.x + 25, bounds.y + 10, bounds.x + 25, bounds.y + 40);
+                break;
+            case CRYSTAL:
+                // Blue crystal
+                g.setColor(new Color(100, 150, 255));
+                int[] crystalX = {bounds.x + 25, bounds.x + 45, bounds.x + 25, bounds.x + 5};
+                int[] crystalY = {bounds.y, bounds.y + 25, bounds.y + 50, bounds.y + 25};
+                g.fillPolygon(crystalX, crystalY, 4);
+                // Crystal shine
+                g.setColor(Color.WHITE);
+                g.fillOval(bounds.x + 20, bounds.y + 15, 8, 8);
+                break;
+        }
+        
+        // Draw label
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.PLAIN, 12));
+        String name = ingredient.name().toLowerCase();
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        g.drawString(name, bounds.x + 5, bounds.y - 5);
     }
     
     private void drawIngredientCupboard(Graphics g) {
