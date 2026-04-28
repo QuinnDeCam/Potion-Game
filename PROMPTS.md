@@ -15,3 +15,6 @@ Wouldn't run, there was an issue where the method signatures for drawIngredientC
 # Prompt 3
 Now add ingredient collection. In the Forest, allow collecting: Mushroom, Leaf, and Crystal. Use to collect ingredients, have it so the player must click on it. Store ingredient counts in GameModel. Display the player's inventory in GameView, where they show up in ingredient room after collecting.
 # Results
+
+# Prompt 4
+Replace the simple triangle forest in GameView with my image file forest.png. Show me how to load the image and draw it in paintComponent when the current room is Forest.
