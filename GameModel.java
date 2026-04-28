@@ -10,6 +10,15 @@
  */
 public class GameModel {
     
+    // Room types
+    public enum Room {
+        FOREST,
+        INGREDIENT_CUPBOARD,
+        BREWING_ROOM
+    }
+    
+    private Room currentRoom = Room.FOREST;
+    
     // TODO: Player data
     // - Player position (x, y coordinates)
     // - Player inventory (potions collected)
@@ -29,4 +38,13 @@ public class GameModel {
     // - Window dimensions
     // - Tile size
     // - Game speed/difficulty
+    
+    // Room management
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+    
+    public void setCurrentRoom(Room room) {
+        this.currentRoom = room;
+    }
 }
