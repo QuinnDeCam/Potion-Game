@@ -12,6 +12,7 @@ public class GameController {
     private GameModel model;
     private GameView view;
     private JFrame frame;
+    private Timer respawnTimer;
     
     public GameController() {
         model = new GameModel();
@@ -31,16 +32,10 @@ public class GameController {
         buttonPanel.setBackground(Color.DARK_GRAY);
         
         JButton forestBtn = new JButton("Forest");
-        JButton cupboardBtn = new JButton("Ingredient Cupboard");
         JButton brewingBtn = new JButton("Brewing Room");
         
         forestBtn.addActionListener(e -> {
             model.setCurrentRoom(GameModel.Room.FOREST);
-            view.repaint();
-        });
-        
-        cupboardBtn.addActionListener(e -> {
-            model.setCurrentRoom(GameModel.Room.INGREDIENT_CUPBOARD);
             view.repaint();
         });
         
@@ -50,7 +45,6 @@ public class GameController {
         });
         
         buttonPanel.add(forestBtn);
-        buttonPanel.add(cupboardBtn);
         buttonPanel.add(brewingBtn);
         
         // Add components to frame
@@ -64,23 +58,28 @@ public class GameController {
     private void setupMouseListener() {
         view.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                if (model.getCurrentRoom() == GameModel.Room.FOREST) {
-                    Point click = e.getPoint();
-                    
-                    // Check if clicked on mushroom
-                    if (view.getMushroomBounds().contains(click)) {
-                        model.collectIngredient(GameModel.Ingredient.MUSHROOM);
-                        view.repaint();
+            public void mousePressed(MouseEvent e) {
+                Point click = e.getPoint();
+                GameModel.Room currentRoom = model.getCurrentRoom();
+                
+                if (currentRoom == GameModel.Room.FOREST) {
+                    for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {
+                        if (ingredient.bounds.contains(click)) {
+                            model.collectIngredient(ingredient);
+                            view.repaint();
+                            checkRespawnTimer();
+                            break;
+                        }
                     }
-                    // Check if clicked on leaf
-                    else if (view.getLeafBounds().contains(click)) {
-                        model.collectIngredient(GameModel.Ingredient.LEAF);
+                } else if (currentRoom == GameModel.Room.BREWING_ROOM) {
+                    if (isClickInStack(click, view.getInvMushroomBounds()) && model.getIngredientCount(GameModel.Ingredient.MUSHROOM) > 0) {
+                        view.toggleIngredientSelection(GameModel.Ingredient.MUSHROOM);
                         view.repaint();
-                    }
-                    // Check if clicked on crystal
-                    else if (view.getCrystalBounds().contains(click)) {
-                        model.collectIngredient(GameModel.Ingredient.CRYSTAL);
+                    } else if (isClickInStack(click, view.getInvLeafBounds()) && model.getIngredientCount(GameModel.Ingredient.LEAF) > 0) {
+                        view.toggleIngredientSelection(GameModel.Ingredient.LEAF);
+                        view.repaint();
+                    } else if (isClickInStack(click, view.getInvCrystalBounds()) && model.getIngredientCount(GameModel.Ingredient.CRYSTAL) > 0) {
+                        view.toggleIngredientSelection(GameModel.Ingredient.CRYSTAL);
                         view.repaint();
                     }
                 }
@@ -88,10 +87,35 @@ public class GameController {
         });
     }
     
+    private boolean isClickInStack(Point click, Rectangle bounds) {
+        // Expand bounds up and to the right by 15px to account for the multiple stacked items
+        Rectangle expanded = new Rectangle(bounds.x - 5, bounds.y - 15, bounds.width + 20, bounds.height + 20);
+        return expanded.contains(click);
+    }
+    
+    private void checkRespawnTimer() {
+        if (model.getActiveIngredients().isEmpty()) {
+            if (respawnTimer == null || !respawnTimer.isRunning()) {
+                respawnTimer = new Timer(60000, e -> {
+                    model.spawnIngredients();
+                    view.repaint();
+                });
+                respawnTimer.setRepeats(false);
+                respawnTimer.start();
+            }
+        }
+    }
+    
     private void setupBrewListener() {
         view.getBrewButton().addActionListener(e -> {
             GameModel.Ingredient ing1 = view.getSelectedIngredient1();
             GameModel.Ingredient ing2 = view.getSelectedIngredient2();
+            
+            if (ing1 == null || ing2 == null) {
+                view.updateBrewResult("Select 2 ingredients!");
+                view.repaint();
+                return;
+            }
             
             GameModel.Potion result = model.brew(ing1, ing2);
             
@@ -107,6 +131,7 @@ public class GameController {
                     resultText = "Unknown Mixture";
             }
             
+            view.clearSelections();
             view.updateBrewResult(resultText);
             view.repaint();
         });

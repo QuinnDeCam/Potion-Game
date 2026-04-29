@@ -17,4 +17,14 @@ Now add ingredient collection. In the Forest, allow collecting: Mushroom, Leaf, 
 # Results
 
 # Prompt 4
-Replace the simple triangle forest in GameView with my image file forest.png. Show me how to load the image and draw it in paintComponent when the current room is Forest.
+Have 2-5 random ingredients spawn in random places in the forest. When all are collected, have that reset after 1 minute. Remove the ingredient cuppoard room, so when ingredients are collected, show them to the brewing room screen, where they can be selected. If there are duplicates collected, stack them, and show how many with text underneath. Keep all visuals and drawing in GameView.java
+# Results
+Sucessfully implemented, the ingredients spawn in random locations, and when collected, they appear in the brewing room with a number indicating the count collected. They do visually stack, which makes the visuals a bit messy, but it works as intended. The clicking of the ingredients in the forest needs to be fixed, since it is unresponsive fairly frequently.
+
+# Prompt 5
+What could be the issue where the clicking of the ingredients sometimes unresponsive?
+# Results 
+Changed mouseClicked to mousePressed, which triggers the instant the mouse goes down, making it feel snappier and a little more forgiving. Also Added an isClickInStack helper method that artificially inflates the bounding box for inventory items up and to the right so that the entire stack is perfectly clickable in the inventory section. 
+
+
+

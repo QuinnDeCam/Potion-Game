@@ -10,15 +10,17 @@ public class GameView extends JPanel {
     private GameModel model;
     
     // Brewing UI components
-    private JComboBox<String> ingredient1Combo;
-    private JComboBox<String> ingredient2Combo;
     private JButton brewButton;
     private JLabel resultLabel;
     
-    // Ingredient positions in Forest
-    private Rectangle mushroomBounds = new Rectangle(200, 420, 50, 50);
-    private Rectangle leafBounds = new Rectangle(450, 440, 50, 50);
-    private Rectangle crystalBounds = new Rectangle(650, 400, 50, 50);
+    // Selected ingredients for brewing
+    private GameModel.Ingredient selectedIngredient1 = null;
+    private GameModel.Ingredient selectedIngredient2 = null;
+    
+    // Inventory positions in Brewing Room
+    private Rectangle invMushroomBounds = new Rectangle(50, 200, 50, 50);
+    private Rectangle invLeafBounds = new Rectangle(50, 280, 50, 50);
+    private Rectangle invCrystalBounds = new Rectangle(50, 360, 50, 50);
     
     public GameView(GameModel model) {
         this.model = model;
@@ -31,23 +33,6 @@ public class GameView extends JPanel {
     }
     
     private void setupBrewingUI() {
-        // Ingredient 1 dropdown
-        ingredient1Combo = new JComboBox<>(new String[]{"Mushroom", "Leaf", "Crystal"});
-        ingredient1Combo.setBounds(250, 200, 120, 30);
-        add(ingredient1Combo);
-        
-        // Plus sign
-        JLabel plusLabel = new JLabel("+");
-        plusLabel.setForeground(Color.WHITE);
-        plusLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        plusLabel.setBounds(380, 195, 30, 30);
-        add(plusLabel);
-        
-        // Ingredient 2 dropdown
-        ingredient2Combo = new JComboBox<>(new String[]{"Mushroom", "Leaf", "Crystal"});
-        ingredient2Combo.setBounds(420, 200, 120, 30);
-        add(ingredient2Combo);
-        
         // Brew button
         brewButton = new JButton("Brew");
         brewButton.setBounds(320, 250, 100, 35);
@@ -64,31 +49,34 @@ public class GameView extends JPanel {
     }
     
     // Getters for brewing components (used by controller)
-    public JComboBox<String> getIngredient1Combo() { return ingredient1Combo; }
-    public JComboBox<String> getIngredient2Combo() { return ingredient2Combo; }
     public JButton getBrewButton() { return brewButton; }
     public JLabel getResultLabel() { return resultLabel; }
     
-    // Getters for ingredient bounds (used by controller for click detection)
-    public Rectangle getMushroomBounds() { return mushroomBounds; }
-    public Rectangle getLeafBounds() { return leafBounds; }
-    public Rectangle getCrystalBounds() { return crystalBounds; }
+    // Getters for inventory bounds (used by controller for click detection)
+    public Rectangle getInvMushroomBounds() { return invMushroomBounds; }
+    public Rectangle getInvLeafBounds() { return invLeafBounds; }
+    public Rectangle getInvCrystalBounds() { return invCrystalBounds; }
     
-    // Helper to convert combo box selection to Ingredient
-    public GameModel.Ingredient getSelectedIngredient1() {
-        return stringToIngredient((String) ingredient1Combo.getSelectedItem());
+    public GameModel.Ingredient getSelectedIngredient1() { return selectedIngredient1; }
+    public GameModel.Ingredient getSelectedIngredient2() { return selectedIngredient2; }
+    
+    public void clearSelections() {
+        selectedIngredient1 = null;
+        selectedIngredient2 = null;
     }
     
-    public GameModel.Ingredient getSelectedIngredient2() {
-        return stringToIngredient((String) ingredient2Combo.getSelectedItem());
-    }
-    
-    private GameModel.Ingredient stringToIngredient(String name) {
-        switch (name) {
-            case "Mushroom": return GameModel.Ingredient.MUSHROOM;
-            case "Leaf": return GameModel.Ingredient.LEAF;
-            case "Crystal": return GameModel.Ingredient.CRYSTAL;
-            default: return null;
+    public void toggleIngredientSelection(GameModel.Ingredient ingredient) {
+        if (selectedIngredient1 == ingredient) {
+            selectedIngredient1 = null;
+        } else if (selectedIngredient2 == ingredient) {
+            selectedIngredient2 = null;
+        } else if (selectedIngredient1 == null) {
+            selectedIngredient1 = ingredient;
+        } else if (selectedIngredient2 == null) {
+            selectedIngredient2 = ingredient;
+        } else {
+            // Replace the first one if both are full
+            selectedIngredient1 = ingredient;
         }
     }
     
@@ -111,34 +99,14 @@ public class GameView extends JPanel {
         int centerX = (getWidth() - titleWidth) / 2;
         g.drawString(roomName, centerX, 60);
         
-        // Draw inventory display
-        drawInventory(g);
-        
         // Draw room-specific visual
         drawRoomVisual(g, currentRoom);
-    }
-    
-    private void drawInventory(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.setColor(Color.WHITE);
-        
-        int inventoryX = 20;
-        int inventoryY = 80;
-        
-        g.drawString("Inventory:", inventoryX, inventoryY);
-        
-        g.setFont(new Font("Arial", Font.PLAIN, 16));
-        g.drawString("Mushrooms: " + model.getIngredientCount(GameModel.Ingredient.MUSHROOM), inventoryX, inventoryY + 25);
-        g.drawString("Leaves: " + model.getIngredientCount(GameModel.Ingredient.LEAF), inventoryX, inventoryY + 50);
-        g.drawString("Crystals: " + model.getIngredientCount(GameModel.Ingredient.CRYSTAL), inventoryX, inventoryY + 75);
     }
     
     private String getRoomDisplayName(GameModel.Room room) {
         switch (room) {
             case FOREST:
                 return "Forest";
-            case INGREDIENT_CUPBOARD:
-                return "Ingredient Cupboard";
             case BREWING_ROOM:
                 return "Brewing Room";
             default:
@@ -150,9 +118,6 @@ public class GameView extends JPanel {
         switch (room) {
             case FOREST:
                 drawForest(g);
-                break;
-            case INGREDIENT_CUPBOARD:
-                drawIngredientCupboard(g);
                 break;
             case BREWING_ROOM:
                 drawBrewingRoom(g);
@@ -180,16 +145,13 @@ public class GameView extends JPanel {
         g.setColor(Color.YELLOW);
         g.fillOval(650, 50, 80, 80);
         
-        // Draw collectible ingredients (if not collected)
-        drawIngredient(g, GameModel.Ingredient.MUSHROOM, mushroomBounds);
-        drawIngredient(g, GameModel.Ingredient.LEAF, leafBounds);
-        drawIngredient(g, GameModel.Ingredient.CRYSTAL, crystalBounds);
+        // Draw active collectible ingredients
+        for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {
+            drawIngredient(g, ingredient.type, ingredient.bounds);
+        }
     }
     
     private void drawIngredient(Graphics g, GameModel.Ingredient ingredient, Rectangle bounds) {
-        if (model.isIngredientCollected(ingredient)) {
-            return; // Don't draw if already collected
-        }
         
         switch (ingredient) {
             case MUSHROOM:
@@ -227,39 +189,7 @@ public class GameView extends JPanel {
         g.drawString(name, bounds.x + 5, bounds.y - 5);
     }
     
-    private void drawIngredientCupboard(Graphics g) {
-        // Draw wooden shelves
-        g.setColor(new Color(139, 69, 19));
-        g.fillRect(100, 150, 600, 30);
-        g.fillRect(100, 280, 600, 30);
-        g.fillRect(100, 410, 600, 30);
-        
-        // Draw jars on shelves
-        g.setColor(new Color(255, 200, 200)); // pink jar
-        g.fillOval(150, 180, 40, 50);
-        g.setColor(new Color(200, 255, 200)); // green jar
-        g.fillOval(250, 180, 40, 50);
-        g.setColor(new Color(200, 200, 255)); // blue jar
-        g.fillOval(350, 180, 40, 50);
-        g.setColor(new Color(255, 255, 200)); // yellow jar
-        g.fillOval(450, 180, 40, 50);
-        g.setColor(new Color(255, 200, 100)); // orange jar
-        g.fillOval(550, 180, 40, 50);
-        
-        g.setColor(new Color(255, 200, 200));
-        g.fillOval(180, 310, 40, 50);
-        g.setColor(new Color(200, 255, 200));
-        g.fillOval(300, 310, 40, 50);
-        g.setColor(new Color(200, 200, 255));
-        g.fillOval(420, 310, 40, 50);
-        
-        g.setColor(new Color(255, 255, 200));
-        g.fillOval(200, 440, 40, 50);
-        g.setColor(new Color(255, 200, 100));
-        g.fillOval(350, 440, 40, 50);
-        g.setColor(new Color(200, 255, 255));
-        g.fillOval(500, 440, 40, 50);
-    }
+    // Removed ingredient cupboard
     
     private void drawBrewingRoom(Graphics g) {
         // Draw cauldron
@@ -304,5 +234,49 @@ public class GameView extends JPanel {
         g.fillOval(650, 120, 30, 40);
         g.setColor(Color.BLUE);
         g.fillOval(700, 130, 25, 30);
+        
+        // Draw selected ingredients in the top area (plus sign visual)
+        if (selectedIngredient1 != null) {
+            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190, 50, 50));
+        }
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("+", 380, 220);
+        if (selectedIngredient2 != null) {
+            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190, 50, 50));
+        }
+        
+        // Draw Inventory Stacks
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString("Inventory", 40, 180);
+        
+        drawInventoryStack(g, GameModel.Ingredient.MUSHROOM, invMushroomBounds);
+        drawInventoryStack(g, GameModel.Ingredient.LEAF, invLeafBounds);
+        drawInventoryStack(g, GameModel.Ingredient.CRYSTAL, invCrystalBounds);
+    }
+    
+    private void drawInventoryStack(Graphics g, GameModel.Ingredient type, Rectangle bounds) {
+        int count = model.getIngredientCount(type);
+        if (count > 0) {
+            // Draw highlight if selected
+            if (selectedIngredient1 == type || selectedIngredient2 == type) {
+                g.setColor(new Color(255, 255, 0, 100)); // semi-transparent yellow
+                g.fillRect(bounds.x - 5, bounds.y - 5, bounds.width + 10, bounds.height + 30);
+                g.setColor(Color.YELLOW);
+                g.drawRect(bounds.x - 5, bounds.y - 5, bounds.width + 10, bounds.height + 30);
+            }
+            
+            // Draw multiple to look like a stack
+            for (int i = 0; i < Math.min(count, 3); i++) {
+                Rectangle stackBounds = new Rectangle(bounds.x + (i*5), bounds.y - (i*5), bounds.width, bounds.height);
+                drawIngredient(g, type, stackBounds);
+            }
+            
+            // Draw count
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+            g.drawString("x" + count, bounds.x + 15, bounds.y + bounds.height + 15);
+        }
     }
 }

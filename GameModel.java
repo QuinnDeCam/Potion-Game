@@ -1,3 +1,8 @@
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * GameModel - Placeholder for game data
  * 
@@ -13,7 +18,6 @@ public class GameModel {
     // Room types
     public enum Room {
         FOREST,
-        INGREDIENT_CUPBOARD,
         BREWING_ROOM
     }
     
@@ -38,13 +42,25 @@ public class GameModel {
     private int leafCount = 0;
     private int crystalCount = 0;
     
-    // Forest ingredients (position and collected state)
-    private boolean mushroomCollected = false;
-    private boolean leafCollected = false;
-    private boolean crystalCollected = false;
+    public static class SpawnedIngredient {
+        public Ingredient type;
+        public Rectangle bounds;
+        
+        public SpawnedIngredient(Ingredient type, Rectangle bounds) {
+            this.type = type;
+            this.bounds = bounds;
+        }
+    }
+    
+    // Forest ingredients
+    private List<SpawnedIngredient> activeIngredients = new ArrayList<>();
     
     // Brewing result
     private Potion lastBrewedPotion = null;
+    
+    public GameModel() {
+        spawnIngredients();
+    }
     
     // TODO: Player data
     // - Player position (x, y coordinates)
@@ -94,35 +110,36 @@ public class GameModel {
     }
     
     // Forest ingredient collection
-    public boolean isIngredientCollected(Ingredient ingredient) {
-        switch (ingredient) {
-            case MUSHROOM: return mushroomCollected;
-            case LEAF: return leafCollected;
-            case CRYSTAL: return crystalCollected;
-            default: return false;
+    public List<SpawnedIngredient> getActiveIngredients() {
+        return activeIngredients;
+    }
+    
+    public void spawnIngredients() {
+        activeIngredients.clear();
+        Random random = new Random();
+        int numIngredients = random.nextInt(4) + 2; // 2 to 5 ingredients
+        
+        Ingredient[] allTypes = Ingredient.values();
+        
+        for (int i = 0; i < numIngredients; i++) {
+            Ingredient type = allTypes[random.nextInt(allTypes.length)];
+            
+            // Random bounds in the forest grass area (approx x: 50-700, y: 400-500)
+            // Subtracting width/height (50) to keep them fully visible
+            int x = 50 + random.nextInt(600);
+            int y = 400 + random.nextInt(100);
+            
+            // Note: Not doing complex collision detection here for simplicity,
+            // but in a real game we would ensure they don't overlap.
+            Rectangle bounds = new Rectangle(x, y, 50, 50);
+            
+            activeIngredients.add(new SpawnedIngredient(type, bounds));
         }
     }
     
-    public void collectIngredient(Ingredient ingredient) {
-        switch (ingredient) {
-            case MUSHROOM: 
-                if (!mushroomCollected) {
-                    mushroomCollected = true;
-                    addIngredient(Ingredient.MUSHROOM);
-                }
-                break;
-            case LEAF: 
-                if (!leafCollected) {
-                    leafCollected = true;
-                    addIngredient(Ingredient.LEAF);
-                }
-                break;
-            case CRYSTAL: 
-                if (!crystalCollected) {
-                    crystalCollected = true;
-                    addIngredient(Ingredient.CRYSTAL);
-                }
-                break;
+    public void collectIngredient(SpawnedIngredient ingredient) {
+        if (activeIngredients.remove(ingredient)) {
+            addIngredient(ingredient.type);
         }
     }
     
