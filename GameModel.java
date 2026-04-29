@@ -13,6 +13,7 @@ public class GameModel {
     // Room types
     public enum Room {
         FOREST,
+        INGREDIENT_CUPBOARD,
         BREWING_ROOM
     }
     
@@ -30,20 +31,6 @@ public class GameModel {
         UNKNOWN_MIXTURE
     }
     
-    // Spawned ingredient class
-    private static class SpawnedIngredient {
-        Ingredient type;
-        int x, y;
-        boolean collected;
-        
-        SpawnedIngredient(Ingredient type, int x, int y) {
-            this.type = type;
-            this.x = x;
-            this.y = y;
-            this.collected = false;
-        }
-    }
-    
     private Room currentRoom = Room.FOREST;
     
     // Ingredient inventory
@@ -51,17 +38,13 @@ public class GameModel {
     private int leafCount = 0;
     private int crystalCount = 0;
     
-    // Spawned ingredients in forest
-    private java.util.List<SpawnedIngredient> spawnedIngredients = new java.util.ArrayList<>();
-    private long lastSpawnTime = 0;
-    private static final long RESET_DELAY = 60000; // 1 minute in milliseconds
+    // Forest ingredients (position and collected state)
+    private boolean mushroomCollected = false;
+    private boolean leafCollected = false;
+    private boolean crystalCollected = false;
     
     // Brewing result
     private Potion lastBrewedPotion = null;
-    
-    public GameModel() {
-        spawnRandomIngredients();
-    }
     
     // TODO: Player data
     // - Player position (x, y coordinates)
@@ -92,68 +75,6 @@ public class GameModel {
         this.currentRoom = room;
     }
     
-    // Random ingredient spawning
-    private void spawnRandomIngredients() {
-        spawnedIngredients.clear();
-        int count = 2 + new java.util.Random().nextInt(4); // 2-5 ingredients
-        java.util.Random rand = new java.util.Random();
-        
-        for (int i = 0; i < count; i++) {
-            Ingredient[] ingredients = Ingredient.values();
-            Ingredient type = ingredients[rand.nextInt(ingredients.length)];
-            int x = 100 + rand.nextInt(600);
-            int y = 350 + rand.nextInt(120);
-            spawnedIngredients.add(new SpawnedIngredient(type, x, y));
-        }
-        lastSpawnTime = System.currentTimeMillis();
-    }
-    
-    public java.util.List<SpawnedIngredient> getSpawnedIngredients() {
-        return spawnedIngredients;
-    }
-    
-    public void collectSpawnedIngredient(int index) {
-        if (index >= 0 && index < spawnedIngredients.size()) {
-            SpawnedIngredient ingredient = spawnedIngredients.get(index);
-            if (!ingredient.collected) {
-                ingredient.collected = true;
-                addIngredient(ingredient.type);
-                
-                // Check if all collected
-                if (areAllIngredientsCollected()) {
-                    scheduleReset();
-                }
-            }
-        }
-    }
-    
-    private boolean areAllIngredientsCollected() {
-        for (SpawnedIngredient ing : spawnedIngredients) {
-            if (!ing.collected) return false;
-        }
-        return true;
-    }
-    
-    private void scheduleReset() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(RESET_DELAY);
-                spawnRandomIngredients();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-    
-    public boolean shouldCheckReset() {
-        if (areAllIngredientsCollected() && 
-            System.currentTimeMillis() - lastSpawnTime > RESET_DELAY) {
-            spawnRandomIngredients();
-            return true;
-        }
-        return false;
-    }
-    
     // Ingredient management
     public int getIngredientCount(Ingredient ingredient) {
         switch (ingredient) {
@@ -169,6 +90,39 @@ public class GameModel {
             case MUSHROOM: mushroomCount++; break;
             case LEAF: leafCount++; break;
             case CRYSTAL: crystalCount++; break;
+        }
+    }
+    
+    // Forest ingredient collection
+    public boolean isIngredientCollected(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: return mushroomCollected;
+            case LEAF: return leafCollected;
+            case CRYSTAL: return crystalCollected;
+            default: return false;
+        }
+    }
+    
+    public void collectIngredient(Ingredient ingredient) {
+        switch (ingredient) {
+            case MUSHROOM: 
+                if (!mushroomCollected) {
+                    mushroomCollected = true;
+                    addIngredient(Ingredient.MUSHROOM);
+                }
+                break;
+            case LEAF: 
+                if (!leafCollected) {
+                    leafCollected = true;
+                    addIngredient(Ingredient.LEAF);
+                }
+                break;
+            case CRYSTAL: 
+                if (!crystalCollected) {
+                    crystalCollected = true;
+                    addIngredient(Ingredient.CRYSTAL);
+                }
+                break;
         }
     }
     
