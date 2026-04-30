@@ -27,6 +27,7 @@ public class GameView extends JPanel {
     private Image mushroomImg;
     private Image crystalImg;
     private Image cauldronImg;
+    private Image journalImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -41,6 +42,7 @@ public class GameView extends JPanel {
         leafImg = new ImageIcon("Leaf.png").getImage();
         mushroomImg = new ImageIcon("Mushroom.png").getImage();
         crystalImg = new ImageIcon("Crystal.png").getImage();
+        journalImg = new ImageIcon("Journal.png").getImage();
     }
 
     public Rectangle getJournalButtonBounds() {
@@ -50,7 +52,7 @@ public class GameView extends JPanel {
     private void setupBrewingUI() {
         // Brew button
         brewButton = new JButton("Brew");
-        brewButton.setBounds(320, 250, 100, 35);
+        brewButton.setBounds(630, 450, 100, 35);
         brewButton.setFont(new Font("Arial", Font.BOLD, 16));
         add(brewButton);
 
@@ -106,18 +108,30 @@ public class GameView extends JPanel {
         selectedIngredient2 = null;
     }
 
-    public void toggleIngredientSelection(GameModel.Ingredient ingredient) {
-        if (selectedIngredient1 == ingredient) {
-            selectedIngredient1 = null;
-        } else if (selectedIngredient2 == ingredient) {
-            selectedIngredient2 = null;
-        } else if (selectedIngredient1 == null) {
-            selectedIngredient1 = ingredient;
-        } else if (selectedIngredient2 == null) {
-            selectedIngredient2 = ingredient;
+    public void toggleIngredientSelection(GameModel.Ingredient ingredient, int availableCount) {
+        int currentlySelected = 0;
+        if (selectedIngredient1 == ingredient) currentlySelected++;
+        if (selectedIngredient2 == ingredient) currentlySelected++;
+
+        if (currentlySelected == 0) {
+            // None selected, add to first available slot
+            if (selectedIngredient1 == null) selectedIngredient1 = ingredient;
+            else if (selectedIngredient2 == null) selectedIngredient2 = ingredient;
+            else selectedIngredient1 = ingredient; // overwrite slot 1 if both full
+        } else if (currentlySelected == 1) {
+            // One selected. Can we select a second?
+            if (availableCount >= 2 && (selectedIngredient1 == null || selectedIngredient2 == null)) {
+                if (selectedIngredient1 == null) selectedIngredient1 = ingredient;
+                else selectedIngredient2 = ingredient;
+            } else {
+                // Deselect it
+                if (selectedIngredient1 == ingredient) selectedIngredient1 = null;
+                if (selectedIngredient2 == ingredient) selectedIngredient2 = null;
+            }
         } else {
-            // Replace the first one if both are full
-            selectedIngredient1 = ingredient;
+            // Two selected. Deselect both.
+            if (selectedIngredient1 == ingredient) selectedIngredient1 = null;
+            if (selectedIngredient2 == ingredient) selectedIngredient2 = null;
         }
     }
 
@@ -145,13 +159,24 @@ public class GameView extends JPanel {
 
         if (currentRoom == GameModel.Room.BREWING_ROOM) {
             // Draw journal button
-            g.setColor(new Color(139, 69, 19)); // Brown cover
-            g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
-            g.setColor(new Color(210, 180, 140)); // Pages edge
-            g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
-            g.setColor(new Color(255, 215, 0)); // Gold trim
-            g.drawRect(journalButtonBounds.x + 5, journalButtonBounds.y + 5, journalButtonBounds.width - 20,
-                    journalButtonBounds.height - 10);
+            if (journalImg != null && journalImg.getWidth(null) > 0) {
+                int imgW = journalImg.getWidth(null);
+                int imgH = journalImg.getHeight(null);
+                double scale = Math.min((double) journalButtonBounds.width / imgW, (double) journalButtonBounds.height / imgH);
+                int drawW = (int) (imgW * scale);
+                int drawH = (int) (imgH * scale);
+                int drawX = journalButtonBounds.x + (journalButtonBounds.width - drawW) / 2;
+                int drawY = journalButtonBounds.y + (journalButtonBounds.height - drawH) / 2;
+                g.drawImage(journalImg, drawX, drawY, drawW, drawH, this);
+            } else {
+                g.setColor(new Color(139, 69, 19)); // Brown cover
+                g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
+                g.setColor(new Color(210, 180, 140)); // Pages edge
+                g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
+                g.setColor(new Color(255, 215, 0)); // Gold trim
+                g.drawRect(journalButtonBounds.x + 5, journalButtonBounds.y + 5, journalButtonBounds.width - 20,
+                        journalButtonBounds.height - 10);
+            }
 
             // Draw X of Y above the book
             int discovered = model.getDiscoveredPotions().size();

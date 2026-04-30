@@ -64,3 +64,16 @@ Can the brew button and potion also disapear when the journal is opened? (or I g
 # Results
 (Need to test)
 
+# Prompt 13 
+Can you make it so you can select a second ingredient of the same kind? (of course only when they are available)
+# Results
+(Need to test)
+
+# Prompt 14
+Can you replace the journal Icon with the image Journal.png? As well as move the Brew button the the right of the cauldron?
+# Results
+
+# Prompt 15
+The journal was stretched vertically, can you change it so the journal image keeps it's aspect ratio?
+# Results   
+
