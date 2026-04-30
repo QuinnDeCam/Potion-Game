@@ -88,8 +88,8 @@ public class GameController {
     }
     
     private boolean isClickInStack(Point click, Rectangle bounds) {
-        // Expand bounds up and to the right by 15px to account for the multiple stacked items
-        Rectangle expanded = new Rectangle(bounds.x - 5, bounds.y - 15, bounds.width + 20, bounds.height + 20);
+        // Expand bounds to match the visual selection highlight and text area
+        Rectangle expanded = new Rectangle(bounds.x - 5, bounds.y - 5, bounds.width + 10, bounds.height + 30);
         return expanded.contains(click);
     }
     

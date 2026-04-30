@@ -26,5 +26,17 @@ What could be the issue where the clicking of the ingredients sometimes unrespon
 # Results 
 Changed mouseClicked to mousePressed, which triggers the instant the mouse goes down, making it feel snappier and a little more forgiving. Also Added an isClickInStack helper method that artificially inflates the bounding box for inventory items up and to the right so that the entire stack is perfectly clickable in the inventory section. 
 
+# Prompt 6
+Can you remove the stacking feature, and just draw the one? If there is more than 1, just reflect that with the draw count
+# Results
+In the brewing room, when there is more than 1 ingredient, it will draw a stack of them. This time, that feature was removed so it looks a lot cleaner.
 
+# Prompt 7
+Replace the cauldron with the Cauldron.png 
+# Results
+Worked, but I kinda hated where it was placed and the size of it, so I had to ajust those (which sucks in this Antigravity. will you just let me do things myselfff ugh)
+(did this for each of my little images)
+
+# Prompt 8
+Can you replace the Leaf, mushroom, and crystal with the respective files Leaf.png, Mushroom.png and Crystal.png?
 
