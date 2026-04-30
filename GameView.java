@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
 
 /**
  * GameView - Handles all UI rendering
@@ -21,11 +22,11 @@ public class GameView extends JPanel {
     private Rectangle invMushroomBounds = new Rectangle(50, 200, 50, 50);
     private Rectangle invLeafBounds = new Rectangle(50, 280, 50, 50);
     private Rectangle invCrystalBounds = new Rectangle(50, 360, 50, 50);
-
-    private Image cauldronImg;
-    private Image mushroomImg;
+    private Rectangle journalButtonBounds = new Rectangle(700, 30, 60, 80);
     private Image leafImg;
+    private Image mushroomImg;
     private Image crystalImg;
+    private Image cauldronImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -37,9 +38,13 @@ public class GameView extends JPanel {
         setupBrewingUI();
 
         cauldronImg = new ImageIcon("Cauldron.png").getImage();
-        mushroomImg = new ImageIcon("Mushroom.png").getImage();
         leafImg = new ImageIcon("Leaf.png").getImage();
+        mushroomImg = new ImageIcon("Mushroom.png").getImage();
         crystalImg = new ImageIcon("Crystal.png").getImage();
+    }
+
+    public Rectangle getJournalButtonBounds() {
+        return journalButtonBounds;
     }
 
     private void setupBrewingUI() {
@@ -129,6 +134,71 @@ public class GameView extends JPanel {
 
         // Draw room-specific visual
         drawRoomVisual(g, currentRoom);
+
+        // Draw journal button
+        g.setColor(new Color(139, 69, 19)); // Brown cover
+        g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
+        g.setColor(new Color(210, 180, 140)); // Pages edge
+        g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
+        g.setColor(new Color(255, 215, 0)); // Gold trim
+        g.drawRect(journalButtonBounds.x + 5, journalButtonBounds.y + 5, journalButtonBounds.width - 20,
+                journalButtonBounds.height - 10);
+
+        // Draw X of Y above the book
+        int discovered = model.getDiscoveredPotions().size();
+        int total = model.getTotalDiscoverablePotions();
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.drawString(discovered + "/" + total, journalButtonBounds.x + 10, journalButtonBounds.y - 10);
+
+        // Draw journal overlay if open
+        if (model.isJournalOpen()) {
+            drawJournalOverlay(g);
+        }
+    }
+
+    private void drawJournalOverlay(Graphics g) {
+        // Semi-transparent background
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // Journal pages
+        int jx = 200, jy = 100, jw = 400, jh = 400;
+        g.setColor(new Color(245, 222, 179)); // Wheat/parchment color
+        g.fillRect(jx, jy, jw, jh);
+        g.setColor(new Color(139, 69, 19)); // Dark brown border
+        g.drawRect(jx, jy, jw, jh);
+        g.drawRect(jx + 2, jy + 2, jw - 4, jh - 4);
+
+        // Title
+        g.setFont(new Font("Georgia", Font.BOLD, 24));
+        g.setColor(Color.BLACK);
+        g.drawString("Potions Journal", jx + 40, jy + 40);
+
+        Set<GameModel.Potion> discoveredSet = model.getDiscoveredPotions();
+        int totalPotions = model.getTotalDiscoverablePotions();
+
+        g.setFont(new Font("Georgia", Font.ITALIC, 16));
+        g.drawString("Discovered: " + discoveredSet.size() + " of " + totalPotions, jx + 40, jy + 70);
+
+        int textY = jy + 110;
+        for (GameModel.Potion p : GameModel.Potion.values()) {
+            if (p == GameModel.Potion.UNKNOWN_MIXTURE)
+                continue;
+
+            String potionName = p.name().toLowerCase().replace("_", " ");
+            potionName = potionName.substring(0, 1).toUpperCase() + potionName.substring(1);
+
+            g.setFont(new Font("Georgia", Font.BOLD, 18));
+            if (discoveredSet.contains(p)) {
+                g.setColor(new Color(0, 100, 0));
+                g.drawString("✓ " + potionName, jx + 40, textY);
+            } else {
+                g.setColor(Color.GRAY);
+                g.drawString("? Unknown Recipe", jx + 40, textY);
+            }
+            textY += 30;
+        }
     }
 
     private String getRoomDisplayName(GameModel.Room room) {
@@ -187,11 +257,13 @@ public class GameView extends JPanel {
                     g.drawImage(mushroomImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
                 }
                 break;
+
             case LEAF:
                 if (leafImg != null) {
                     g.drawImage(leafImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
                 }
                 break;
+
             case CRYSTAL:
                 if (crystalImg != null) {
                     g.drawImage(crystalImg, bounds.x, bounds.y, bounds.width, bounds.height, this);

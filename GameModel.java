@@ -2,6 +2,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * GameModel - Placeholder for game data
@@ -32,6 +34,7 @@ public class GameModel {
     public enum Potion {
         HEALING_POTION,
         POISON_POTION,
+        STRENGTH_POTION,
         UNKNOWN_MIXTURE
     }
     
@@ -58,6 +61,12 @@ public class GameModel {
     // Brewing result
     private Potion lastBrewedPotion = null;
     
+    // Discovered potions
+    private Set<Potion> discoveredPotions = new HashSet<>();
+    
+    // UI State
+    private boolean journalOpen = false;
+
     public GameModel() {
         spawnIngredients();
     }
@@ -162,11 +171,38 @@ public class GameModel {
         } else if ((ingredient1 == Ingredient.CRYSTAL && ingredient2 == Ingredient.MUSHROOM) ||
                    (ingredient1 == Ingredient.MUSHROOM && ingredient2 == Ingredient.CRYSTAL)) {
             lastBrewedPotion = Potion.POISON_POTION;
+        } else if ((ingredient1 == Ingredient.MUSHROOM && ingredient2 == Ingredient.LEAF) ||
+                   (ingredient1 == Ingredient.LEAF && ingredient2 == Ingredient.MUSHROOM)) {
+            lastBrewedPotion = Potion.STRENGTH_POTION;
         } else {
             lastBrewedPotion = Potion.UNKNOWN_MIXTURE;
         }
         
+        if (lastBrewedPotion != Potion.UNKNOWN_MIXTURE) {
+            discoveredPotions.add(lastBrewedPotion);
+        }
+        
         return lastBrewedPotion;
+    }
+    
+    public Set<Potion> getDiscoveredPotions() {
+        return discoveredPotions;
+    }
+    
+    public int getTotalDiscoverablePotions() {
+        int count = 0;
+        for (Potion p : Potion.values()) {
+            if (p != Potion.UNKNOWN_MIXTURE) count++;
+        }
+        return count;
+    }
+    
+    public boolean isJournalOpen() {
+        return journalOpen;
+    }
+    
+    public void setJournalOpen(boolean journalOpen) {
+        this.journalOpen = journalOpen;
     }
     
     private void useIngredient(Ingredient ingredient) {

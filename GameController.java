@@ -60,6 +60,21 @@ public class GameController {
             @Override
             public void mousePressed(MouseEvent e) {
                 Point click = e.getPoint();
+                
+                // Toggle journal if button clicked
+                if (view.getJournalButtonBounds().contains(click)) {
+                    model.setJournalOpen(!model.isJournalOpen());
+                    view.repaint();
+                    return;
+                }
+                
+                // If journal is open, clicking anywhere else closes it
+                if (model.isJournalOpen()) {
+                    model.setJournalOpen(false);
+                    view.repaint();
+                    return;
+                }
+
                 GameModel.Room currentRoom = model.getCurrentRoom();
                 
                 if (currentRoom == GameModel.Room.FOREST) {

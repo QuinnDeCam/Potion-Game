@@ -39,4 +39,15 @@ Worked, but I kinda hated where it was placed and the size of it, so I had to aj
 
 # Prompt 8
 Can you replace the Leaf, mushroom, and crystal with the respective files Leaf.png, Mushroom.png and Crystal.png?
+# Results
+Exactly what I wanted, sized perfectly. 
 
+# Prompt 9
+Add a discovered potions journal. When a potion is successfully brewed for the first time, add it to a discovered list in GameModel. Display discovered potions in GameView. 
+Show progress like:
+1 of 3 potions discovered.
+# Results
+Took it literally, even though there are only 2 potions to discover currently lol. 
+
+# Prompt 10
+Have a book (just draw it as a square in GameView.java for now) in the top right corner of the screen. When that is clicked on, show the journal contents. Above the book, have the total number of potions discovered out of the number there are to discover. (if possible, make it easy to add more potions and ingredients later on)
