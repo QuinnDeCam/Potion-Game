@@ -47,7 +47,20 @@ Add a discovered potions journal. When a potion is successfully brewed for the f
 Show progress like:
 1 of 3 potions discovered.
 # Results
-Took it literally, even though there are only 2 potions to discover currently lol. 
+Took it literally, even though there are only 2 potions to discover currently lol. White text in the corner, and added another potion combination that I didn't ask for, and I don't think it's been implemented yet. The journal just pulls up when you click it, and the text is cut off a little by the drawn spine, which I just deleted and now it looks fine.
 
 # Prompt 10
 Have a book (just draw it as a square in GameView.java for now) in the top right corner of the screen. When that is clicked on, show the journal contents. Above the book, have the total number of potions discovered out of the number there are to discover. (if possible, make it easy to add more potions and ingredients later on)
+# Results
+(Need to test)
+
+# Prompt 11
+Also there is a minor issue, where the brew button, and whatever potion the player last made that stays on screen when you move to the foreset. Only show that, as well as the journal on the brewing room
+# Results
+
+
+# Prompt 12
+Can the brew button and potion also disapear when the journal is opened? (or I guess just make it go on top of everything)
+# Results
+(Need to test)
+

@@ -36,11 +36,13 @@ public class GameController {
         
         forestBtn.addActionListener(e -> {
             model.setCurrentRoom(GameModel.Room.FOREST);
+            view.updateUIVisibility(GameModel.Room.FOREST);
             view.repaint();
         });
         
         brewingBtn.addActionListener(e -> {
             model.setCurrentRoom(GameModel.Room.BREWING_ROOM);
+            view.updateUIVisibility(GameModel.Room.BREWING_ROOM);
             view.repaint();
         });
         
@@ -64,6 +66,7 @@ public class GameController {
                 // Toggle journal if button clicked
                 if (view.getJournalButtonBounds().contains(click)) {
                     model.setJournalOpen(!model.isJournalOpen());
+                    view.updateUIVisibility(model.getCurrentRoom());
                     view.repaint();
                     return;
                 }
@@ -71,6 +74,7 @@ public class GameController {
                 // If journal is open, clicking anywhere else closes it
                 if (model.isJournalOpen()) {
                     model.setJournalOpen(false);
+                    view.updateUIVisibility(model.getCurrentRoom());
                     view.repaint();
                     return;
                 }

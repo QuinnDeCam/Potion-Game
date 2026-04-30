@@ -61,6 +61,14 @@ public class GameView extends JPanel {
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBounds(200, 300, 400, 30);
         add(resultLabel);
+        
+        updateUIVisibility(model.getCurrentRoom());
+    }
+    
+    public void updateUIVisibility(GameModel.Room currentRoom) {
+        boolean isBrewing = (currentRoom == GameModel.Room.BREWING_ROOM) && !model.isJournalOpen();
+        if (brewButton != null) brewButton.setVisible(isBrewing);
+        if (resultLabel != null) resultLabel.setVisible(isBrewing);
     }
 
     // Getters for brewing components (used by controller)
@@ -135,25 +143,27 @@ public class GameView extends JPanel {
         // Draw room-specific visual
         drawRoomVisual(g, currentRoom);
 
-        // Draw journal button
-        g.setColor(new Color(139, 69, 19)); // Brown cover
-        g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
-        g.setColor(new Color(210, 180, 140)); // Pages edge
-        g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
-        g.setColor(new Color(255, 215, 0)); // Gold trim
-        g.drawRect(journalButtonBounds.x + 5, journalButtonBounds.y + 5, journalButtonBounds.width - 20,
-                journalButtonBounds.height - 10);
+        if (currentRoom == GameModel.Room.BREWING_ROOM) {
+            // Draw journal button
+            g.setColor(new Color(139, 69, 19)); // Brown cover
+            g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
+            g.setColor(new Color(210, 180, 140)); // Pages edge
+            g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
+            g.setColor(new Color(255, 215, 0)); // Gold trim
+            g.drawRect(journalButtonBounds.x + 5, journalButtonBounds.y + 5, journalButtonBounds.width - 20,
+                    journalButtonBounds.height - 10);
 
-        // Draw X of Y above the book
-        int discovered = model.getDiscoveredPotions().size();
-        int total = model.getTotalDiscoverablePotions();
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 14));
-        g.drawString(discovered + "/" + total, journalButtonBounds.x + 10, journalButtonBounds.y - 10);
+            // Draw X of Y above the book
+            int discovered = model.getDiscoveredPotions().size();
+            int total = model.getTotalDiscoverablePotions();
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+            g.drawString(discovered + "/" + total, journalButtonBounds.x + 10, journalButtonBounds.y - 10);
 
-        // Draw journal overlay if open
-        if (model.isJournalOpen()) {
-            drawJournalOverlay(g);
+            // Draw journal overlay if open
+            if (model.isJournalOpen()) {
+                drawJournalOverlay(g);
+            }
         }
     }
 
