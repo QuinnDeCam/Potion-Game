@@ -76,4 +76,19 @@ Can you replace the journal Icon with the image Journal.png? As well as move the
 # Prompt 15
 The journal was stretched vertically, can you change it so the journal image keeps it's aspect ratio?
 # Results   
+Worked! Didn't stretch the icon. It was a little small though, so I resized it manually
 
+# Prompt 16
+Add a win condition. When all potions have been discovered, display: "You discovered all recipes!" Disable further brewing after victory.
+# Results
+(Need to test)
+
+# Prompt 17
+Can we upgrade the open journal a little bit? I would like to include the recipe for each of the discoverable potions in the journal, as well as a little icon that is what the potion looks like. (Those can just be gray rectangles for now). 
+# Results
+(Need to test)
+
+# Prompt 18 
+Now, when we discover the potion, the gray icon will become the potion icon I'll upload for it. Now, can we add a gravity effect? When the brew button is pressed, the selected ingredients drop into the cauldron, and 3 second pause before something (the potion's icon) comes out of it. 
+# Results
+(Need to test)

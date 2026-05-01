@@ -18,6 +18,13 @@ public class GameView extends JPanel {
     private GameModel.Ingredient selectedIngredient1 = null;
     private GameModel.Ingredient selectedIngredient2 = null;
 
+    // Animation states
+    private boolean isAnimating = false;
+    private int animPhase = 0; // 0=none, 1=drop, 2=brew, 3=emerge
+    private int animDropY = 0;
+    private int animPotionY = 0;
+    private GameModel.Potion resultPotion = null;
+
     // Inventory positions in Brewing Room
     private Rectangle invMushroomBounds = new Rectangle(50, 200, 50, 50);
     private Rectangle invLeafBounds = new Rectangle(50, 280, 50, 50);
@@ -114,6 +121,8 @@ public class GameView extends JPanel {
     }
 
     public void toggleIngredientSelection(GameModel.Ingredient ingredient, int availableCount) {
+        if (isAnimating) return; // Disable clicking during animation
+        
         int currentlySelected = 0;
         if (selectedIngredient1 == ingredient) currentlySelected++;
         if (selectedIngredient2 == ingredient) currentlySelected++;
@@ -138,6 +147,52 @@ public class GameView extends JPanel {
             if (selectedIngredient1 == ingredient) selectedIngredient1 = null;
             if (selectedIngredient2 == ingredient) selectedIngredient2 = null;
         }
+    }
+
+    public void startBrewAnimation(GameModel.Potion result, Runnable onComplete) {
+        if (isAnimating) return;
+        
+        isAnimating = true;
+        animPhase = 1;
+        animDropY = 0;
+        animPotionY = 0;
+        resultPotion = result;
+        if (brewButton != null) brewButton.setEnabled(false);
+
+        Timer timer = new Timer(33, null); // ~30 fps
+        timer.addActionListener(e -> {
+            if (animPhase == 1) {
+                animDropY += 5; // Drop speed
+                if (animDropY >= 110) { // Reached cauldron (190 -> 300)
+                    animPhase = 2; // Brewing phase
+                }
+            } else if (animPhase == 2) {
+                // 3 second wait (3000ms / 33ms = 90 frames roughly)
+                // Let's use animDropY as a frame counter for phase 2 to avoid extra vars
+                animDropY++;
+                if (animDropY >= 200) { // 90 frames of waiting
+                    animPhase = 3;
+                    animPotionY = -50; // start slightly inside cauldron
+                }
+            } else if (animPhase == 3) {
+                animPotionY += 3; // emerge speed
+                if (animPotionY >= 60) { // fully emerged
+                    timer.stop();
+                    
+                    // Reset animation state
+                    isAnimating = false;
+                    animPhase = 0;
+                    animDropY = 0;
+                    animPotionY = 0;
+                    resultPotion = null;
+                    
+                    // Execute completion logic
+                    if (onComplete != null) onComplete.run();
+                }
+            }
+            repaint();
+        });
+        timer.start();
     }
 
     public void updateBrewResult(String result) {
@@ -229,15 +284,37 @@ public class GameView extends JPanel {
             String potionName = p.name().toLowerCase().replace("_", " ");
             potionName = potionName.substring(0, 1).toUpperCase() + potionName.substring(1);
 
-            g.setFont(new Font("Georgia", Font.BOLD, 18));
+            // Draw icon (gray rectangle)
+            g.setColor(Color.GRAY);
+            g.fillRect(jx + 40, textY - 15, 30, 30);
+
             if (discoveredSet.contains(p)) {
                 g.setColor(new Color(0, 100, 0));
-                g.drawString("✓ " + potionName, jx + 40, textY);
+                g.setFont(new Font("Georgia", Font.BOLD, 18));
+                g.drawString(potionName, jx + 80, textY);
+                
+                // Draw recipe
+                g.setColor(Color.DARK_GRAY);
+                g.setFont(new Font("Georgia", Font.ITALIC, 14));
+                GameModel.Ingredient[] recipe = model.getRecipe(p);
+                if (recipe != null && recipe.length == 2) {
+                    String ing1 = recipe[0].name().toLowerCase();
+                    ing1 = ing1.substring(0, 1).toUpperCase() + ing1.substring(1);
+                    String ing2 = recipe[1].name().toLowerCase();
+                    ing2 = ing2.substring(0, 1).toUpperCase() + ing2.substring(1);
+                    g.drawString("Recipe: " + ing1 + " + " + ing2, jx + 80, textY + 15);
+                }
             } else {
                 g.setColor(Color.GRAY);
-                g.drawString("? Unknown Recipe", jx + 40, textY);
+                g.setFont(new Font("Georgia", Font.BOLD, 18));
+                g.drawString("Unknown Recipe", jx + 80, textY);
+                
+                // Draw unknown recipe
+                g.setColor(Color.LIGHT_GRAY);
+                g.setFont(new Font("Georgia", Font.ITALIC, 14));
+                g.drawString("Recipe: ? + ?", jx + 80, textY + 15);
             }
-            textY += 30;
+            textY += 50;
         }
     }
 
@@ -345,14 +422,31 @@ public class GameView extends JPanel {
         // g.fillOval(700, 130, 25, 30);
 
         // Draw selected ingredients in the top area (plus sign visual)
-        if (selectedIngredient1 != null) {
-            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190, 50, 50));
+        if (selectedIngredient1 != null && animPhase < 2) {
+            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190 + animDropY, 50, 50));
         }
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("+", 380, 220);
-        if (selectedIngredient2 != null) {
-            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190, 50, 50));
+        if (!isAnimating) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 24));
+            g.drawString("+", 380, 220);
+        }
+        if (selectedIngredient2 != null && animPhase < 2) {
+            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190 + animDropY, 50, 50));
+        }
+
+        // Draw emerging potion
+        if (animPhase == 3 && resultPotion != null) {
+            // Placeholder: gray rectangle with name, or just a colored box
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(360, 300 - animPotionY, 80, 80);
+            g.setColor(Color.BLACK);
+            g.drawRect(360, 300 - animPotionY, 80, 80);
+            
+            // Text to show what it is
+            g.setFont(new Font("Arial", Font.BOLD, 12));
+            String name = resultPotion.name().replace("_POTION", "");
+            if (resultPotion == GameModel.Potion.UNKNOWN_MIXTURE) name = "UNKNOWN";
+            g.drawString(name, 365, 300 - animPotionY + 45);
         }
 
         // Draw Inventory Stacks

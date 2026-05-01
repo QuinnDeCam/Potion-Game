@@ -189,6 +189,19 @@ public class GameModel {
         return discoveredPotions;
     }
     
+    public Ingredient[] getRecipe(Potion p) {
+        switch (p) {
+            case HEALING_POTION: 
+                return new Ingredient[]{Ingredient.LEAF, Ingredient.CRYSTAL};
+            case POISON_POTION: 
+                return new Ingredient[]{Ingredient.CRYSTAL, Ingredient.MUSHROOM};
+            case STRENGTH_POTION: 
+                return new Ingredient[]{Ingredient.MUSHROOM, Ingredient.LEAF};
+            default: 
+                return null;
+        }
+    }
+    
     public int getTotalDiscoverablePotions() {
         int count = 0;
         for (Potion p : Potion.values()) {
