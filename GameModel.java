@@ -197,6 +197,10 @@ public class GameModel {
         return count;
     }
     
+    public boolean hasWon() {
+        return discoveredPotions.size() == getTotalDiscoverablePotions();
+    }
+    
     public boolean isJournalOpen() {
         return journalOpen;
     }

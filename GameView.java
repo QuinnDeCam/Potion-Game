@@ -69,7 +69,12 @@ public class GameView extends JPanel {
     
     public void updateUIVisibility(GameModel.Room currentRoom) {
         boolean isBrewing = (currentRoom == GameModel.Room.BREWING_ROOM) && !model.isJournalOpen();
-        if (brewButton != null) brewButton.setVisible(isBrewing);
+        if (brewButton != null) {
+            brewButton.setVisible(isBrewing);
+            if (model.hasWon()) {
+                brewButton.setEnabled(false);
+            }
+        }
         if (resultLabel != null) resultLabel.setVisible(isBrewing);
     }
 

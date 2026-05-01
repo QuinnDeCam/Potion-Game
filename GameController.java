@@ -152,8 +152,16 @@ public class GameController {
                 case POISON_POTION:
                     resultText = "Poison Potion!";
                     break;
+                case STRENGTH_POTION:
+                    resultText = "Strength Potion!";
+                    break;
                 default:
                     resultText = "Unknown Mixture";
+            }
+            
+            if (model.hasWon()) {
+                resultText = "You discovered all recipes!";
+                view.getBrewButton().setEnabled(false);
             }
 
             view.clearSelections();
