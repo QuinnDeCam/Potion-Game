@@ -36,6 +36,7 @@ public class GameView extends JPanel {
     private Image cauldronImg;
     private Image journalImg;
     private Image forestImg;
+    private Image bubbleImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -52,6 +53,7 @@ public class GameView extends JPanel {
         crystalImg = new ImageIcon("Crystal.png").getImage();
         journalImg = new ImageIcon("Journal.png").getImage();
         forestImg = new ImageIcon("Forest.png").getImage();
+        bubbleImg = new ImageIcon("Bubble.png").getImage();
     }
 
     public Rectangle getJournalButtonBounds() {
@@ -420,6 +422,17 @@ public class GameView extends JPanel {
         }
         if (selectedIngredient2 != null && animPhase < 2) {
             drawIngredient(g, selectedIngredient2, new Rectangle(420, 190 + animDropY, 50, 50), true);
+        }
+
+        // Draw bubbles during brewing phase
+        if (animPhase == 2 && bubbleImg != null) {
+            // Use animDropY as a frame counter (goes from ~110 to 200)
+            int bubble1Y = 320 - ((animDropY * 2) % 100);
+            int bubble2Y = 340 - ((animDropY * 3) % 120);
+            int bubble3Y = 330 - ((animDropY * 4) % 110);
+            g.drawImage(bubbleImg, 380, bubble1Y, 30, 30, this);
+            g.drawImage(bubbleImg, 420, bubble2Y, 20, 20, this);
+            g.drawImage(bubbleImg, 350, bubble3Y, 25, 25, this);
         }
 
         // Draw emerging potion

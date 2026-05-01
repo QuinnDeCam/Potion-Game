@@ -121,14 +121,15 @@ public class GameController {
 
     private void setupSpawnTimer() {
         Random random = new Random();
-        int initialDelay = 8000 + random.nextInt(32001); // 8 to 40 seconds
+        int initialDelay = 8000 + random.nextInt(7001); // 8 to 15 seconds
         respawnTimer = new Timer(initialDelay, e -> {
             model.spawnRandomIngredients();
             view.repaint();
             // Set random delay for the next spawn
-            int nextDelay = 8000 + random.nextInt(32001);
+            int nextDelay = 8000 + random.nextInt(7001);
             respawnTimer.setDelay(nextDelay);
         });
+
         respawnTimer.setRepeats(true);
         respawnTimer.start();
     }
@@ -160,13 +161,13 @@ public class GameController {
                 default:
                     resultText = "Unknown Mixture";
             }
-            
+
             String finalResultText = resultText;
             view.updateBrewResult(""); // clear text while brewing
             view.startBrewAnimation(result, () -> {
                 view.clearSelections();
                 view.updateBrewResult(finalResultText);
-                
+
                 if (model.hasWon()) {
                     view.updateBrewResult("You discovered all recipes!");
                     view.getBrewButton().setEnabled(false);
