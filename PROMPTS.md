@@ -95,3 +95,10 @@ Now, when we discover the potion, the gray icon will become the potion icon I'll
 
 # Prompt 19
 Replace the background of the Forest with the Forest.png
+# Results
+(Need to test)
+
+# Prompt 20
+Can we change the timing of ingredient collecting in the forest? I would like 1 ingredient to spawn randomly every 8-40 seconds or so. Have about a 1 in 5 chance  of two spawning instead of just 1. Also, remove the label above each ingredient, only show it if it is selected above the cauldron.
+# Results
+(Need to test)

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 /**
  * GameController - Main controller for the MVC architecture
@@ -21,6 +22,7 @@ public class GameController {
         setupFrame();
         setupMouseListener();
         setupBrewListener();
+        setupSpawnTimer();
     }
 
     private void setupFrame() {
@@ -86,7 +88,6 @@ public class GameController {
                         if (ingredient.bounds.contains(click)) {
                             model.collectIngredient(ingredient);
                             view.repaint();
-                            checkRespawnTimer();
                             break;
                         }
                     }
@@ -118,17 +119,18 @@ public class GameController {
         return expanded.contains(click);
     }
 
-    private void checkRespawnTimer() {
-        if (model.getActiveIngredients().isEmpty()) {
-            if (respawnTimer == null || !respawnTimer.isRunning()) {
-                respawnTimer = new Timer(60000, e -> {
-                    model.spawnIngredients();
-                    view.repaint();
-                });
-                respawnTimer.setRepeats(false);
-                respawnTimer.start();
-            }
-        }
+    private void setupSpawnTimer() {
+        Random random = new Random();
+        int initialDelay = 8000 + random.nextInt(32001); // 8 to 40 seconds
+        respawnTimer = new Timer(initialDelay, e -> {
+            model.spawnRandomIngredients();
+            view.repaint();
+            // Set random delay for the next spawn
+            int nextDelay = 8000 + random.nextInt(32001);
+            respawnTimer.setDelay(nextDelay);
+        });
+        respawnTimer.setRepeats(true);
+        respawnTimer.start();
     }
 
     private void setupBrewListener() {

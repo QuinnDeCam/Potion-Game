@@ -349,11 +349,11 @@ public class GameView extends JPanel {
 
         // Draw active collectible ingredients
         for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {
-            drawIngredient(g, ingredient.type, ingredient.bounds);
+            drawIngredient(g, ingredient.type, ingredient.bounds, false);
         }
     }
 
-    private void drawIngredient(Graphics g, GameModel.Ingredient ingredient, Rectangle bounds) {
+    private void drawIngredient(Graphics g, GameModel.Ingredient ingredient, Rectangle bounds, boolean showLabel) {
 
         switch (ingredient) {
             case MUSHROOM:
@@ -375,14 +375,15 @@ public class GameView extends JPanel {
                 break;
         }
 
-        // Draw label
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 12));
+        if (showLabel) {
+            // Draw label
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.PLAIN, 12));
 
-        String name = ingredient.name()
-                .toLowerCase();
-        name = name.substring(0, 1).toUpperCase() + name.substring(1);
-        g.drawString(name, bounds.x + 5, bounds.y - 5);
+            String name = ingredient.name().toLowerCase();
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            g.drawString(name, bounds.x + 5, bounds.y - 5);
+        }
     }
 
     // Removed ingredient cupboard
@@ -410,7 +411,7 @@ public class GameView extends JPanel {
 
         // Draw selected ingredients in the top area (plus sign visual)
         if (selectedIngredient1 != null && animPhase < 2) {
-            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190 + animDropY, 50, 50));
+            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190 + animDropY, 50, 50), true);
         }
         if (!isAnimating) {
             g.setColor(Color.WHITE);
@@ -418,7 +419,7 @@ public class GameView extends JPanel {
             g.drawString("+", 380, 220);
         }
         if (selectedIngredient2 != null && animPhase < 2) {
-            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190 + animDropY, 50, 50));
+            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190 + animDropY, 50, 50), true);
         }
 
         // Draw emerging potion
@@ -458,7 +459,7 @@ public class GameView extends JPanel {
             }
 
             // Draw single item
-            drawIngredient(g, type, bounds);
+            drawIngredient(g, type, bounds, false);
 
             // Draw count
             g.setColor(Color.WHITE);

@@ -68,7 +68,7 @@ public class GameModel {
     private boolean journalOpen = false;
 
     public GameModel() {
-        spawnIngredients();
+        spawnRandomIngredients();
     }
     
     // TODO: Player data
@@ -123,10 +123,9 @@ public class GameModel {
         return activeIngredients;
     }
     
-    public void spawnIngredients() {
-        activeIngredients.clear();
+    public void spawnRandomIngredients() {
         Random random = new Random();
-        int numIngredients = random.nextInt(4) + 2; // 2 to 5 ingredients
+        int numIngredients = (random.nextInt(5) == 0) ? 2 : 1; // 1 in 5 chance to spawn 2
         
         Ingredient[] allTypes = Ingredient.values();
         
@@ -138,11 +137,7 @@ public class GameModel {
             int x = 50 + random.nextInt(600);
             int y = 400 + random.nextInt(100);
             
-            // Note: Not doing complex collision detection here for simplicity,
-            // but in a real game we would ensure they don't overlap.
-            Rectangle bounds = new Rectangle(x, y, 50, 50);
-            
-            activeIngredients.add(new SpawnedIngredient(type, bounds));
+            activeIngredients.add(new SpawnedIngredient(type, new Rectangle(x, y, 50, 50)));
         }
     }
     
