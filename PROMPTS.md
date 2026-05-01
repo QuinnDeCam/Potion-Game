@@ -92,3 +92,6 @@ Can we upgrade the open journal a little bit? I would like to include the recipe
 Now, when we discover the potion, the gray icon will become the potion icon I'll upload for it. Now, can we add a gravity effect? When the brew button is pressed, the selected ingredients drop into the cauldron, and 3 second pause before something (the potion's icon) comes out of it. 
 # Results
 (Need to test)
+
+# Prompt 19
+Replace the background of the Forest with the Forest.png

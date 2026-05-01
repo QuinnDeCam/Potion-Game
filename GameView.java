@@ -35,6 +35,7 @@ public class GameView extends JPanel {
     private Image crystalImg;
     private Image cauldronImg;
     private Image journalImg;
+    private Image forestImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -50,6 +51,7 @@ public class GameView extends JPanel {
         mushroomImg = new ImageIcon("Mushroom.png").getImage();
         crystalImg = new ImageIcon("Crystal.png").getImage();
         journalImg = new ImageIcon("Journal.png").getImage();
+        forestImg = new ImageIcon("Forest.png").getImage();
     }
 
     public Rectangle getJournalButtonBounds() {
@@ -341,24 +343,9 @@ public class GameView extends JPanel {
     }
 
     private void drawForest(Graphics g) {
-        // Draw grass ground
-        g.setColor(new Color(34, 139, 34));
-        g.fillRect(50, 400, 700, 150);
-
-        // Draw trees (triangles)
-        g.setColor(new Color(139, 69, 19)); // brown trunk
-        g.fillRect(150, 350, 30, 100);
-        g.fillRect(400, 320, 30, 130);
-        g.fillRect(600, 360, 30, 90);
-
-        g.setColor(new Color(0, 100, 0)); // green foliage
-        g.fillPolygon(new int[] { 135, 165, 195 }, new int[] { 250, 350, 250 }, 3);
-        g.fillPolygon(new int[] { 385, 435, 485 }, new int[] { 200, 320, 200 }, 3);
-        g.fillPolygon(new int[] { 585, 630, 675 }, new int[] { 270, 360, 270 }, 3);
-
-        // Draw sun
-        g.setColor(Color.YELLOW);
-        g.fillOval(650, 50, 80, 80);
+        if (forestImg != null) {
+            g.drawImage(forestImg, 0, 0, getWidth(), getHeight(), this);
+        }
 
         // Draw active collectible ingredients
         for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {

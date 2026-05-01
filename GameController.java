@@ -159,14 +159,20 @@ public class GameController {
                     resultText = "Unknown Mixture";
             }
             
-            if (model.hasWon()) {
-                resultText = "You discovered all recipes!";
-                view.getBrewButton().setEnabled(false);
-            }
-
-            view.clearSelections();
-            view.updateBrewResult(resultText);
-            view.repaint();
+            String finalResultText = resultText;
+            view.updateBrewResult(""); // clear text while brewing
+            view.startBrewAnimation(result, () -> {
+                view.clearSelections();
+                view.updateBrewResult(finalResultText);
+                
+                if (model.hasWon()) {
+                    view.updateBrewResult("You discovered all recipes!");
+                    view.getBrewButton().setEnabled(false);
+                } else {
+                    view.getBrewButton().setEnabled(true);
+                }
+                view.repaint();
+            });
         });
     }
 
