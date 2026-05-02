@@ -60,6 +60,7 @@ public class GameModel {
     
     // Brewing result
     private Potion lastBrewedPotion = null;
+    private boolean lastBrewWasNewDiscovery = false;
     
     // Discovered potions
     private Set<Potion> discoveredPotions = new HashSet<>();
@@ -174,12 +175,18 @@ public class GameModel {
         }
         
         if (lastBrewedPotion != Potion.UNKNOWN_MIXTURE) {
-            discoveredPotions.add(lastBrewedPotion);
+            lastBrewWasNewDiscovery = discoveredPotions.add(lastBrewedPotion);
+        } else {
+            lastBrewWasNewDiscovery = false;
         }
         
         return lastBrewedPotion;
     }
     
+    public boolean wasLastBrewNewDiscovery() {
+        return lastBrewWasNewDiscovery;
+    }
+
     public Set<Potion> getDiscoveredPotions() {
         return discoveredPotions;
     }

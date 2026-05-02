@@ -164,7 +164,7 @@ public class GameController {
 
             String finalResultText = resultText;
             view.updateBrewResult(""); // clear text while brewing
-            view.startBrewAnimation(result, () -> {
+            view.startBrewAnimation(result, model.wasLastBrewNewDiscovery(), () -> {
                 view.clearSelections();
                 view.updateBrewResult(finalResultText);
 

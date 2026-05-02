@@ -25,6 +25,16 @@ public class GameView extends JPanel {
     private int animPotionY = 0;
     private GameModel.Potion resultPotion = null;
 
+    // Discovery Animation states
+    private boolean animIsNewDiscovery = false;
+    private double animRotation = 0;
+    private double animScale = 1.0;
+    private double animCurrentX = 0;
+    private double animCurrentY = 0;
+    private int animTargetX = 0;
+    private int animTargetY = 0;
+    private int lingerFrames = 0;
+
     // Inventory positions in Brewing Room
     private Rectangle invMushroomBounds = new Rectangle(50, 200, 50, 50);
     private Rectangle invLeafBounds = new Rectangle(50, 280, 50, 50);
@@ -60,6 +70,68 @@ public class GameView extends JPanel {
         return journalButtonBounds;
     }
 
+    private static final int[][] POTION_PIXELS = {
+            { 0, 0, 0, 0, 7, 6, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 7, 6, 0, 0, 0, 0 },
+            { 0, 0, 0, 1, 7, 6, 1, 0, 0, 0 },
+            { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0 },
+            { 0, 0, 0, 1, 1, 1, 1, 0, 0, 0 },
+            { 0, 0, 0, 1, 2, 1, 1, 0, 0, 0 },
+            { 0, 0, 1, 2, 2, 3, 4, 1, 0, 0 },
+            { 0, 0, 1, 2, 3, 4, 4, 1, 0, 0 },
+            { 0, 1, 2, 2, 4, 4, 4, 4, 1, 0 },
+            { 0, 1, 2, 3, 4, 4, 5, 5, 1, 0 },
+            { 1, 3, 2, 4, 4, 4, 5, 5, 5, 1 },
+            { 1, 3, 3, 4, 5, 5, 5, 5, 5, 1 },
+            { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+    };
+
+    private void drawPotionIcon(Graphics g, GameModel.Potion potion, int x, int y, int pixelSize) {
+        Color brightColor;
+        Color midColor;
+        Color darkColor;
+
+        if (potion == GameModel.Potion.POISON_POTION) {
+            brightColor = new Color(181, 230, 29);
+            midColor = new Color(56, 127, 62);
+            darkColor = new Color(26, 94, 42);
+        } else if (potion == GameModel.Potion.HEALING_POTION) {
+            brightColor = new Color(255, 100, 100);
+            midColor = new Color(200, 0, 0);
+            darkColor = new Color(130, 0, 0);
+        } else if (potion == GameModel.Potion.STRENGTH_POTION) {
+            brightColor = new Color(255, 165, 0);
+            midColor = new Color(200, 100, 0);
+            darkColor = new Color(130, 50, 0);
+        } else { // Unknown
+            brightColor = new Color(150, 150, 150);
+            midColor = new Color(100, 100, 100);
+            darkColor = new Color(50, 50, 50);
+        }
+
+        Color[] palette = {
+                new Color(0, 0, 0, 0), // 0 transparent
+                new Color(179, 179, 179), // 1 outline
+                new Color(255, 255, 255), // 2 white highlight
+                brightColor, // 3 bright color
+                midColor, // 4 mid color
+                darkColor, // 5 dark color
+                new Color(142, 94, 74), // 6 cork base
+                new Color(176, 139, 122) // 7 cork highlight
+        };
+
+        for (int r = 0; r < POTION_PIXELS.length; r++) {
+            for (int c = 0; c < POTION_PIXELS[r].length; c++) {
+                int colorIndex = POTION_PIXELS[r][c];
+                if (colorIndex != 0) {
+                    g.setColor(palette[colorIndex]);
+                    g.fillRect(x + c * pixelSize, y + r * pixelSize, pixelSize, pixelSize);
+                }
+            }
+        }
+    }
+
     private void setupBrewingUI() {
         // Brew button
         brewButton = new JButton("Brew");
@@ -74,10 +146,10 @@ public class GameView extends JPanel {
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBounds(200, 300, 400, 30);
         add(resultLabel);
-        
+
         updateUIVisibility(model.getCurrentRoom());
     }
-    
+
     public void updateUIVisibility(GameModel.Room currentRoom) {
         boolean isBrewing = (currentRoom == GameModel.Room.BREWING_ROOM) && !model.isJournalOpen();
         if (brewButton != null) {
@@ -86,7 +158,8 @@ public class GameView extends JPanel {
                 brewButton.setEnabled(false);
             }
         }
-        if (resultLabel != null) resultLabel.setVisible(isBrewing);
+        if (resultLabel != null)
+            resultLabel.setVisible(isBrewing);
     }
 
     // Getters for brewing components (used by controller)
@@ -125,43 +198,69 @@ public class GameView extends JPanel {
     }
 
     public void toggleIngredientSelection(GameModel.Ingredient ingredient, int availableCount) {
-        if (isAnimating) return; // Disable clicking during animation
-        
+        if (isAnimating)
+            return; // Disable clicking during animation
+
         int currentlySelected = 0;
-        if (selectedIngredient1 == ingredient) currentlySelected++;
-        if (selectedIngredient2 == ingredient) currentlySelected++;
+        if (selectedIngredient1 == ingredient)
+            currentlySelected++;
+        if (selectedIngredient2 == ingredient)
+            currentlySelected++;
 
         if (currentlySelected == 0) {
             // None selected, add to first available slot
-            if (selectedIngredient1 == null) selectedIngredient1 = ingredient;
-            else if (selectedIngredient2 == null) selectedIngredient2 = ingredient;
-            else selectedIngredient1 = ingredient; // overwrite slot 1 if both full
+            if (selectedIngredient1 == null)
+                selectedIngredient1 = ingredient;
+            else if (selectedIngredient2 == null)
+                selectedIngredient2 = ingredient;
+            else
+                selectedIngredient1 = ingredient; // overwrite slot 1 if both full
         } else if (currentlySelected == 1) {
             // One selected. Can we select a second?
             if (availableCount >= 2 && (selectedIngredient1 == null || selectedIngredient2 == null)) {
-                if (selectedIngredient1 == null) selectedIngredient1 = ingredient;
-                else selectedIngredient2 = ingredient;
+                if (selectedIngredient1 == null)
+                    selectedIngredient1 = ingredient;
+                else
+                    selectedIngredient2 = ingredient;
             } else {
                 // Deselect it
-                if (selectedIngredient1 == ingredient) selectedIngredient1 = null;
-                if (selectedIngredient2 == ingredient) selectedIngredient2 = null;
+                if (selectedIngredient1 == ingredient)
+                    selectedIngredient1 = null;
+                if (selectedIngredient2 == ingredient)
+                    selectedIngredient2 = null;
             }
         } else {
             // Two selected. Deselect both.
-            if (selectedIngredient1 == ingredient) selectedIngredient1 = null;
-            if (selectedIngredient2 == ingredient) selectedIngredient2 = null;
+            if (selectedIngredient1 == ingredient)
+                selectedIngredient1 = null;
+            if (selectedIngredient2 == ingredient)
+                selectedIngredient2 = null;
         }
     }
 
-    public void startBrewAnimation(GameModel.Potion result, Runnable onComplete) {
-        if (isAnimating) return;
-        
+    public void startBrewAnimation(GameModel.Potion result, boolean isNewDiscovery, Runnable onComplete) {
+        if (isAnimating)
+            return;
+
         isAnimating = true;
         animPhase = 1;
         animDropY = 0;
         animPotionY = 0;
         resultPotion = result;
-        if (brewButton != null) brewButton.setEnabled(false);
+        animIsNewDiscovery = isNewDiscovery;
+
+        animRotation = 0;
+        animScale = 1.0;
+        animCurrentX = 360;
+        animCurrentY = 240;
+
+        // Target is the center of the journal button
+        animTargetX = journalButtonBounds.x + journalButtonBounds.width / 2 - 40; // offset for center
+        animTargetY = journalButtonBounds.y + journalButtonBounds.height / 2 - 40;
+        lingerFrames = 0;
+
+        if (brewButton != null)
+            brewButton.setEnabled(false);
 
         Timer timer = new Timer(33, null); // ~30 fps
         timer.addActionListener(e -> {
@@ -172,7 +271,6 @@ public class GameView extends JPanel {
                 }
             } else if (animPhase == 2) {
                 // 3 second wait (3000ms / 33ms = 90 frames roughly)
-                // Let's use animDropY as a frame counter for phase 2 to avoid extra vars
                 animDropY++;
                 if (animDropY >= 200) { // 90 frames of waiting
                     animPhase = 3;
@@ -181,22 +279,50 @@ public class GameView extends JPanel {
             } else if (animPhase == 3) {
                 animPotionY += 3; // emerge speed
                 if (animPotionY >= 60) { // fully emerged
+                    if (animIsNewDiscovery) {
+                        animPhase = 4;
+                    } else {
+                        timer.stop();
+                        resetAnimation();
+                        if (onComplete != null)
+                            onComplete.run();
+                    }
+                }
+            } else if (animPhase == 4) {
+                lingerFrames++;
+                if (lingerFrames >= 45) { // 1.5 seconds linger
+                    animPhase = 5;
+                }
+            } else if (animPhase == 5) {
+                // Fly to journal
+                double dx = animTargetX - animCurrentX;
+                double dy = animTargetY - animCurrentY;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 10) {
                     timer.stop();
-                    
-                    // Reset animation state
-                    isAnimating = false;
-                    animPhase = 0;
-                    animDropY = 0;
-                    animPotionY = 0;
-                    resultPotion = null;
-                    
-                    // Execute completion logic
-                    if (onComplete != null) onComplete.run();
+                    resetAnimation();
+                    if (onComplete != null)
+                        onComplete.run();
+                } else {
+                    animCurrentX += dx * 0.1; // Ease in
+                    animCurrentY += dy * 0.1;
+                    animRotation += 0.2; // Spin
+                    animScale = Math.max(0.1, animScale * 0.95); // Shrink
                 }
             }
             repaint();
         });
         timer.start();
+    }
+
+    private void resetAnimation() {
+        isAnimating = false;
+        animPhase = 0;
+        animDropY = 0;
+        animPotionY = 0;
+        resultPotion = null;
+        animIsNewDiscovery = false;
     }
 
     public void updateBrewResult(String result) {
@@ -226,7 +352,8 @@ public class GameView extends JPanel {
             if (journalImg != null && journalImg.getWidth(null) > 0) {
                 int imgW = journalImg.getWidth(null);
                 int imgH = journalImg.getHeight(null);
-                double scale = Math.min((double) journalButtonBounds.width / imgW, (double) journalButtonBounds.height / imgH);
+                double scale = Math.min((double) journalButtonBounds.width / imgW,
+                        (double) journalButtonBounds.height / imgH);
                 int drawW = (int) (imgW * scale);
                 int drawH = (int) (imgH * scale);
                 int drawX = journalButtonBounds.x + (journalButtonBounds.width - drawW) / 2;
@@ -234,7 +361,8 @@ public class GameView extends JPanel {
                 g.drawImage(journalImg, drawX, drawY, drawW, drawH, this);
             } else {
                 g.setColor(new Color(139, 69, 19)); // Brown cover
-                g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width, journalButtonBounds.height);
+                g.fillRect(journalButtonBounds.x, journalButtonBounds.y, journalButtonBounds.width,
+                        journalButtonBounds.height);
                 g.setColor(new Color(210, 180, 140)); // Pages edge
                 g.fillRect(journalButtonBounds.x + 45, journalButtonBounds.y + 5, 10, 70);
                 g.setColor(new Color(255, 215, 0)); // Gold trim
@@ -288,15 +416,19 @@ public class GameView extends JPanel {
             String potionName = p.name().toLowerCase().replace("_", " ");
             potionName = potionName.substring(0, 1).toUpperCase() + potionName.substring(1);
 
-            // Draw icon (gray rectangle)
-            g.setColor(Color.GRAY);
-            g.fillRect(jx + 40, textY - 15, 30, 30);
+            // Draw icon
+            if (discoveredSet.contains(p)) {
+                drawPotionIcon(g, p, jx + 40, textY - 20, 2);
+            } else {
+                g.setColor(Color.GRAY);
+                g.fillRect(jx + 40, textY - 15, 30, 30);
+            }
 
             if (discoveredSet.contains(p)) {
                 g.setColor(new Color(0, 100, 0));
                 g.setFont(new Font("Georgia", Font.BOLD, 18));
                 g.drawString(potionName, jx + 80, textY);
-                
+
                 // Draw recipe
                 g.setColor(Color.DARK_GRAY);
                 g.setFont(new Font("Georgia", Font.ITALIC, 14));
@@ -312,7 +444,7 @@ public class GameView extends JPanel {
                 g.setColor(Color.GRAY);
                 g.setFont(new Font("Georgia", Font.BOLD, 18));
                 g.drawString("Unknown Recipe", jx + 80, textY);
-                
+
                 // Draw unknown recipe
                 g.setColor(Color.LIGHT_GRAY);
                 g.setFont(new Font("Georgia", Font.ITALIC, 14));
@@ -436,18 +568,38 @@ public class GameView extends JPanel {
         }
 
         // Draw emerging potion
-        if (animPhase == 3 && resultPotion != null) {
-            // Placeholder: gray rectangle with name, or just a colored box
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillRect(360, 300 - animPotionY, 80, 80);
-            g.setColor(Color.BLACK);
-            g.drawRect(360, 300 - animPotionY, 80, 80);
-            
-            // Text to show what it is
-            g.setFont(new Font("Arial", Font.BOLD, 12));
-            String name = resultPotion.name().replace("_POTION", "");
-            if (resultPotion == GameModel.Potion.UNKNOWN_MIXTURE) name = "UNKNOWN";
-            g.drawString(name, 365, 300 - animPotionY + 45);
+        if (animPhase >= 3 && resultPotion != null) {
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            if (animPhase == 3 || animPhase == 4) {
+                drawPotionIcon(g2d, resultPotion, 360, 300 - animPotionY, 5);
+
+                if (animPhase == 4) {
+                    // Draw "New Discovery!" above
+                    g2d.setColor(Color.YELLOW);
+                    g2d.setFont(new Font("Georgia", Font.BOLD, 20));
+                    g2d.drawString("New Discovery!", 310, 300 - animPotionY - 20);
+                } else {
+                    // Text to show what it is
+                    g2d.setColor(Color.WHITE);
+                    g2d.setFont(new Font("Arial", Font.BOLD, 12));
+                    String name = resultPotion.name().replace("_POTION", "");
+                    if (resultPotion == GameModel.Potion.UNKNOWN_MIXTURE)
+                        name = "UNKNOWN";
+                    g2d.drawString(name, 365, 300 - animPotionY + 95);
+                }
+            } else if (animPhase == 5) {
+                // Apply transforms
+                int cx = (int) animCurrentX + 40;
+                int cy = (int) animCurrentY + 40;
+                g2d.translate(cx, cy);
+                g2d.rotate(animRotation);
+                g2d.scale(animScale, animScale);
+                g2d.translate(-cx, -cy);
+                drawPotionIcon(g2d, resultPotion, (int) animCurrentX, (int) animCurrentY, 5);
+            }
+
+            g2d.dispose();
         }
 
         // Draw Inventory Stacks

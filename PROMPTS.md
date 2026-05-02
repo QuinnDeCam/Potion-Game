@@ -102,3 +102,39 @@ Replace the background of the Forest with the Forest.png
 Can we change the timing of ingredient collecting in the forest? I would like 1 ingredient to spawn randomly every 8-40 seconds or so. Have about a 1 in 5 chance  of two spawning instead of just 1. Also, remove the label above each ingredient, only show it if it is selected above the cauldron.
 # Results
 (Need to test)
+
+Can you make the resulting potion icon this:
+int[][] potion = {
+{0,0,0,0,7,6,0,0,0,0},
+{0,0,0,0,7,6,0,0,0,0},
+{0,0,0,1,7,6,1,0,0,0},
+{0,0,0,0,1,1,0,0,0,0},
+{0,0,0,0,1,1,0,0,0,0},
+{0,0,0,1,1,1,1,0,0,0},
+{0,0,0,1,2,1,1,0,0,0},
+{0,0,1,2,2,3,4,1,0,0},
+{0,0,1,2,3,4,4,1,0,0},
+{0,1,2,2,4,4,4,4,1,0},
+{0,1,2,3,4,4,5,5,1,0},
+{1,3,2,4,4,4,5,5,5,1},
+{1,3,3,4,5,5,5,5,5,1},
+{0,1,1,1,1,1,1,1,1,1}
+};
+
+Where 
+The color pallete is this for the poison potion, 
+ = {
+    Color[] palette = {
+    new Color(0, 0, 0, 0),        // 0 transparent
+    new Color(179,179,179),       // 1 #B3B3B3
+    new Color(128,128,128),       // 2 White
+    new Color(181,230,29),        // 3 #B5E61D
+    new Color(56,127,62),         // 4 #387F3E
+    new Color(26,94,42),          // 5 #1A5E2A
+    new Color(142,94,74),         // 6 #8E5E4A
+    new Color(176,139,122)        // 7 #B08B7A
+};
+
+The greens should be changed to a different color that depend on the potion. 
+
+When the potion is discovered, have the icon linger a little longer, with the name discovery just above it, and then have the icon spin and shrink into the journal icon, to show it's being added. Replace the little gray square in the journal for that potion with the icon when discovered. 
