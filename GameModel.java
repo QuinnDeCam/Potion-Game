@@ -5,6 +5,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
 
+import java.util.Map;
+import java.util.EnumMap;
+
 /**
  * GameModel - Placeholder for game data
  * 
@@ -20,6 +23,7 @@ public class GameModel {
     // Room types
     public enum Room {
         FOREST,
+        CAVE,
         BREWING_ROOM
     }
     
@@ -27,7 +31,10 @@ public class GameModel {
     public enum Ingredient {
         MUSHROOM,
         LEAF,
-        CRYSTAL
+        CRYSTAL,
+        BUG,
+        TREE_SAP,
+        FROG
     }
     
     // Potion types
@@ -40,10 +47,9 @@ public class GameModel {
     
     private Room currentRoom = Room.FOREST;
     
-    // Ingredient inventory
-    private int mushroomCount = 0;
-    private int leafCount = 0;
-    private int crystalCount = 0;
+    // Ingredient inventory and spawning weights
+    private Map<Ingredient, Integer> inventory = new EnumMap<>(Ingredient.class);
+    private Map<Ingredient, Integer> spawnWeights = new EnumMap<>(Ingredient.class);
     
     public static class SpawnedIngredient {
         public Ingredient type;
@@ -55,8 +61,8 @@ public class GameModel {
         }
     }
     
-    // Forest ingredients
-    private List<SpawnedIngredient> activeIngredients = new ArrayList<>();
+    // Forest and Cave ingredients
+    private Map<Room, List<SpawnedIngredient>> activeIngredientsByRoom = new EnumMap<>(Room.class);
     
     // Brewing result
     private Potion lastBrewedPotion = null;
@@ -69,6 +75,19 @@ public class GameModel {
     private boolean journalOpen = false;
 
     public GameModel() {
+        // Initialize inventory and weights
+        for (Ingredient i : Ingredient.values()) {
+            inventory.put(i, 0);
+            spawnWeights.put(i, 10); // default weight
+        }
+        
+        // Easily modify spawn rates here:
+        spawnWeights.put(Ingredient.FROG, 5); // Example: frog is rarer
+        spawnWeights.put(Ingredient.BUG, 8);
+        
+        activeIngredientsByRoom.put(Room.FOREST, new ArrayList<>());
+        activeIngredientsByRoom.put(Room.CAVE, new ArrayList<>());
+        
         spawnRandomIngredients();
     }
     
@@ -103,47 +122,62 @@ public class GameModel {
     
     // Ingredient management
     public int getIngredientCount(Ingredient ingredient) {
-        switch (ingredient) {
-            case MUSHROOM: return mushroomCount;
-            case LEAF: return leafCount;
-            case CRYSTAL: return crystalCount;
-            default: return 0;
-        }
+        return inventory.getOrDefault(ingredient, 0);
     }
     
     public void addIngredient(Ingredient ingredient) {
-        switch (ingredient) {
-            case MUSHROOM: mushroomCount++; break;
-            case LEAF: leafCount++; break;
-            case CRYSTAL: crystalCount++; break;
-        }
+        inventory.put(ingredient, getIngredientCount(ingredient) + 1);
     }
     
-    // Forest ingredient collection
-    public List<SpawnedIngredient> getActiveIngredients() {
-        return activeIngredients;
+    // Room ingredient collection
+    public List<SpawnedIngredient> getActiveIngredients(Room room) {
+        return activeIngredientsByRoom.getOrDefault(room, new ArrayList<>());
     }
     
     public void spawnRandomIngredients() {
         Random random = new Random();
-        int numIngredients = (random.nextInt(5) == 0) ? 2 : 1; // 1 in 5 chance to spawn 2
         
-        Ingredient[] allTypes = Ingredient.values();
+        // Spawn for Forest
+        spawnInRoom(Room.FOREST, new Ingredient[]{Ingredient.LEAF, Ingredient.TREE_SAP, Ingredient.FROG}, random);
+        
+        // Spawn for Cave
+        spawnInRoom(Room.CAVE, new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG}, random);
+    }
+    
+    private void spawnInRoom(Room room, Ingredient[] validTypes, Random random) {
+        int numIngredients = (random.nextInt(5) == 0) ? 2 : 1; // 1 in 5 chance to spawn 2
+        List<SpawnedIngredient> roomList = activeIngredientsByRoom.get(room);
+        if (roomList == null) return;
         
         for (int i = 0; i < numIngredients; i++) {
-            Ingredient type = allTypes[random.nextInt(allTypes.length)];
+            int totalWeight = 0;
+            for (Ingredient t : validTypes) {
+                totalWeight += spawnWeights.getOrDefault(t, 10);
+            }
+            if (totalWeight == 0) continue;
             
-            // Random bounds in the forest grass area (approx x: 50-700, y: 400-500)
-            // Subtracting width/height (50) to keep them fully visible
+            int r = random.nextInt(totalWeight);
+            Ingredient selectedType = validTypes[0];
+            int currentWeight = 0;
+            for (Ingredient t : validTypes) {
+                currentWeight += spawnWeights.getOrDefault(t, 10);
+                if (r < currentWeight) {
+                    selectedType = t;
+                    break;
+                }
+            }
+            
+            // Random bounds in the grass/ground area (approx x: 50-700, y: 400-500)
             int x = 50 + random.nextInt(600);
             int y = 400 + random.nextInt(100);
             
-            activeIngredients.add(new SpawnedIngredient(type, new Rectangle(x, y, 50, 50)));
+            roomList.add(new SpawnedIngredient(selectedType, new Rectangle(x, y, 50, 50)));
         }
     }
     
-    public void collectIngredient(SpawnedIngredient ingredient) {
-        if (activeIngredients.remove(ingredient)) {
+    public void collectIngredient(Room room, SpawnedIngredient ingredient) {
+        List<SpawnedIngredient> roomList = activeIngredientsByRoom.get(room);
+        if (roomList != null && roomList.remove(ingredient)) {
             addIngredient(ingredient.type);
         }
     }
@@ -225,16 +259,9 @@ public class GameModel {
     }
     
     private void useIngredient(Ingredient ingredient) {
-        switch (ingredient) {
-            case MUSHROOM: 
-                if (mushroomCount > 0) mushroomCount--; 
-                break;
-            case LEAF: 
-                if (leafCount > 0) leafCount--; 
-                break;
-            case CRYSTAL: 
-                if (crystalCount > 0) crystalCount--; 
-                break;
+        int currentCount = inventory.getOrDefault(ingredient, 0);
+        if (currentCount > 0) {
+            inventory.put(ingredient, currentCount - 1);
         }
     }
     

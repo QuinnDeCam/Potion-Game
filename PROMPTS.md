@@ -52,17 +52,17 @@ Took it literally, even though there are only 2 potions to discover currently lo
 # Prompt 10
 Have a book (just draw it as a square in GameView.java for now) in the top right corner of the screen. When that is clicked on, show the journal contents. Above the book, have the total number of potions discovered out of the number there are to discover. (if possible, make it easy to add more potions and ingredients later on)
 # Results
-(Need to test)
+Sucessfully added, the text is white and in the top right corner, the book icon is there, and the total count is there. When it is clicked on, the brew button and result potion are on top of the open journal, and the journal follows each room, which I don't want so I will be removing that next. 
 
 # Prompt 11
 Also there is a minor issue, where the brew button, and whatever potion the player last made that stays on screen when you move to the foreset. Only show that, as well as the journal on the brewing room
 # Results
-
+Fixed the issue
 
 # Prompt 12
 Can the brew button and potion also disapear when the journal is opened? (or I guess just make it go on top of everything)
 # Results
-(Need to test)
+Fixed the issue! Now I just want 
 
 # Prompt 13 
 Can you make it so you can select a second ingredient of the same kind? (of course only when they are available)
@@ -137,4 +137,15 @@ The color pallete is this for the poison potion,
 
 The greens should be changed to a different color that depend on the potion. 
 
+# Prompt 21
 When the potion is discovered, have the icon linger a little longer, with the name discovery just above it, and then have the icon spin and shrink into the journal icon, to show it's being added. Replace the little gray square in the journal for that potion with the icon when discovered. 
+# Results
+(Need to test)
+
+# Prompt 22
+I think it is time to up the potion game. Are you ready to make new rooms? I'm thinking each room has different ingredients, can we start by changing the ingredients of the forest, and adding a cave room? In the cave there will be the crystal, the Mushroom, and also a bug. In the Forest we will have Tree sap, Frog, and keep the Leaf.
+# Results 
+(Need to test)
+before implentation plan, answered questions:
+
+To answer your questions first. For the Inventory layout, I plan on adding another room and add 6 more ingredients soon, so I would like to have two columns. I like the size of the ingredients currently, so if there isn't enough space we could use the top of the screen in the brewing if needed. For the second question, yes, I will add combinations later. Also, make the rate of spawning of each ingredient really easily modifyed, so I can change them for each ingredient individually. 

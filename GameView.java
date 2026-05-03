@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.Set;
+import java.util.Map;
+import java.util.EnumMap;
 
 /**
  * GameView - Handles all UI rendering
@@ -35,17 +37,20 @@ public class GameView extends JPanel {
     private int animTargetY = 0;
     private int lingerFrames = 0;
 
-    // Inventory positions in Brewing Room
-    private Rectangle invMushroomBounds = new Rectangle(50, 200, 50, 50);
-    private Rectangle invLeafBounds = new Rectangle(50, 280, 50, 50);
-    private Rectangle invCrystalBounds = new Rectangle(50, 360, 50, 50);
+    // Inventory bounds map
+    private Map<GameModel.Ingredient, Rectangle> invBoundsMap = new EnumMap<>(GameModel.Ingredient.class);
+    
     private Rectangle journalButtonBounds = new Rectangle(700, 30, 60, 80);
     private Image leafImg;
     private Image mushroomImg;
     private Image crystalImg;
+    private Image bugImg;
+    private Image treeSapImg;
+    private Image frogImg;
     private Image cauldronImg;
     private Image journalImg;
     private Image forestImg;
+    private Image caveImg;
     private Image bubbleImg;
 
     public GameView(GameModel model) {
@@ -54,6 +59,16 @@ public class GameView extends JPanel {
         setBackground(Color.DARK_GRAY);
         setLayout(null);
 
+        // Setup inventory bounds
+        // Left Column: Forest
+        invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 200, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 280, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 360, 50, 50));
+        // Right Column: Cave
+        invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(80, 200, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(80, 280, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(80, 360, 50, 50));
+
         // Setup brewing UI
         setupBrewingUI();
 
@@ -61,8 +76,12 @@ public class GameView extends JPanel {
         leafImg = new ImageIcon("Leaf.png").getImage();
         mushroomImg = new ImageIcon("Mushroom.png").getImage();
         crystalImg = new ImageIcon("Crystal.png").getImage();
+        bugImg = new ImageIcon("Bug.png").getImage();
+        treeSapImg = new ImageIcon("TreeSap.png").getImage();
+        frogImg = new ImageIcon("Frog.png").getImage();
         journalImg = new ImageIcon("Journal.png").getImage();
         forestImg = new ImageIcon("Forest.png").getImage();
+        caveImg = new ImageIcon("Cave.png").getImage();
         bubbleImg = new ImageIcon("Bubble.png").getImage();
     }
 
@@ -172,16 +191,8 @@ public class GameView extends JPanel {
     }
 
     // Getters for inventory bounds (used by controller for click detection)
-    public Rectangle getInvMushroomBounds() {
-        return invMushroomBounds;
-    }
-
-    public Rectangle getInvLeafBounds() {
-        return invLeafBounds;
-    }
-
-    public Rectangle getInvCrystalBounds() {
-        return invCrystalBounds;
+    public Rectangle getInvBounds(GameModel.Ingredient type) {
+        return invBoundsMap.get(type);
     }
 
     public GameModel.Ingredient getSelectedIngredient1() {
@@ -458,6 +469,8 @@ public class GameView extends JPanel {
         switch (room) {
             case FOREST:
                 return "Forest";
+            case CAVE:
+                return "Cave";
             case BREWING_ROOM:
                 return "Brewing Room";
             default:
@@ -470,6 +483,9 @@ public class GameView extends JPanel {
             case FOREST:
                 drawForest(g);
                 break;
+            case CAVE:
+                drawCave(g);
+                break;
             case BREWING_ROOM:
                 drawBrewingRoom(g);
                 break;
@@ -477,12 +493,29 @@ public class GameView extends JPanel {
     }
 
     private void drawForest(Graphics g) {
-        if (forestImg != null) {
+        if (forestImg != null && forestImg.getWidth(null) > 0) {
             g.drawImage(forestImg, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            g.setColor(new Color(34, 139, 34)); // Fallback forest green
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
 
         // Draw active collectible ingredients
-        for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {
+        for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(GameModel.Room.FOREST)) {
+            drawIngredient(g, ingredient.type, ingredient.bounds, false);
+        }
+    }
+
+    private void drawCave(Graphics g) {
+        if (caveImg != null && caveImg.getWidth(null) > 0) {
+            g.drawImage(caveImg, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            g.setColor(new Color(70, 70, 80)); // Fallback cave dark gray
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        // Draw active collectible ingredients
+        for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(GameModel.Room.CAVE)) {
             drawIngredient(g, ingredient.type, ingredient.bounds, false);
         }
     }
@@ -503,8 +536,45 @@ public class GameView extends JPanel {
                 break;
 
             case CRYSTAL:
-                if (crystalImg != null) {
+                if (crystalImg != null && crystalImg.getWidth(null) > 0) {
                     g.drawImage(crystalImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(Color.CYAN);
+                    g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
+                }
+                break;
+                
+            case BUG:
+                if (bugImg != null && bugImg.getWidth(null) > 0) {
+                    g.drawImage(bugImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(new Color(139, 0, 139)); // Dark magenta
+                    g.fillOval(bounds.x + 10, bounds.y + 15, bounds.width - 20, bounds.height - 30);
+                    g.setColor(Color.BLACK);
+                    g.drawLine(bounds.x + 10, bounds.y + 25, bounds.x + bounds.width - 10, bounds.y + 25);
+                }
+                break;
+                
+            case TREE_SAP:
+                if (treeSapImg != null && treeSapImg.getWidth(null) > 0) {
+                    g.drawImage(treeSapImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(new Color(255, 165, 0)); // Orange
+                    int[] xPoints = {bounds.x + 25, bounds.x + 10, bounds.x + 40};
+                    int[] yPoints = {bounds.y + 10, bounds.y + 40, bounds.y + 40};
+                    g.fillPolygon(xPoints, yPoints, 3);
+                }
+                break;
+                
+            case FROG:
+                if (frogImg != null && frogImg.getWidth(null) > 0) {
+                    g.drawImage(frogImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(new Color(34, 139, 34)); // Forest green
+                    g.fillOval(bounds.x + 10, bounds.y + 20, bounds.width - 20, bounds.height - 25);
+                    g.setColor(Color.BLACK);
+                    g.fillOval(bounds.x + 15, bounds.y + 25, 5, 5); // Eye
+                    g.fillOval(bounds.x + 30, bounds.y + 25, 5, 5); // Eye
                 }
                 break;
         }
@@ -607,9 +677,12 @@ public class GameView extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 18));
         g.drawString("Inventory", 40, 180);
 
-        drawInventoryStack(g, GameModel.Ingredient.MUSHROOM, invMushroomBounds);
-        drawInventoryStack(g, GameModel.Ingredient.LEAF, invLeafBounds);
-        drawInventoryStack(g, GameModel.Ingredient.CRYSTAL, invCrystalBounds);
+        for (GameModel.Ingredient type : GameModel.Ingredient.values()) {
+            Rectangle bounds = invBoundsMap.get(type);
+            if (bounds != null) {
+                drawInventoryStack(g, type, bounds);
+            }
+        }
     }
 
     private void drawInventoryStack(Graphics g, GameModel.Ingredient type, Rectangle bounds) {

@@ -34,11 +34,18 @@ public class GameController {
         buttonPanel.setBackground(Color.DARK_GRAY);
 
         JButton forestBtn = new JButton("Forest");
+        JButton caveBtn = new JButton("Cave");
         JButton brewingBtn = new JButton("Brewing Room");
 
         forestBtn.addActionListener(e -> {
             model.setCurrentRoom(GameModel.Room.FOREST);
             view.updateUIVisibility(GameModel.Room.FOREST);
+            view.repaint();
+        });
+
+        caveBtn.addActionListener(e -> {
+            model.setCurrentRoom(GameModel.Room.CAVE);
+            view.updateUIVisibility(GameModel.Room.CAVE);
             view.repaint();
         });
 
@@ -49,6 +56,7 @@ public class GameController {
         });
 
         buttonPanel.add(forestBtn);
+        buttonPanel.add(caveBtn);
         buttonPanel.add(brewingBtn);
 
         // Add components to frame
@@ -83,30 +91,22 @@ public class GameController {
 
                 GameModel.Room currentRoom = model.getCurrentRoom();
 
-                if (currentRoom == GameModel.Room.FOREST) {
-                    for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients()) {
+                if (currentRoom == GameModel.Room.FOREST || currentRoom == GameModel.Room.CAVE) {
+                    for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(currentRoom)) {
                         if (ingredient.bounds.contains(click)) {
-                            model.collectIngredient(ingredient);
+                            model.collectIngredient(currentRoom, ingredient);
                             view.repaint();
                             break;
                         }
                     }
                 } else if (currentRoom == GameModel.Room.BREWING_ROOM) {
-                    if (isClickInStack(click, view.getInvMushroomBounds())
-                            && model.getIngredientCount(GameModel.Ingredient.MUSHROOM) > 0) {
-                        view.toggleIngredientSelection(GameModel.Ingredient.MUSHROOM,
-                                model.getIngredientCount(GameModel.Ingredient.MUSHROOM));
-                        view.repaint();
-                    } else if (isClickInStack(click, view.getInvLeafBounds())
-                            && model.getIngredientCount(GameModel.Ingredient.LEAF) > 0) {
-                        view.toggleIngredientSelection(GameModel.Ingredient.LEAF,
-                                model.getIngredientCount(GameModel.Ingredient.LEAF));
-                        view.repaint();
-                    } else if (isClickInStack(click, view.getInvCrystalBounds())
-                            && model.getIngredientCount(GameModel.Ingredient.CRYSTAL) > 0) {
-                        view.toggleIngredientSelection(GameModel.Ingredient.CRYSTAL,
-                                model.getIngredientCount(GameModel.Ingredient.CRYSTAL));
-                        view.repaint();
+                    for (GameModel.Ingredient type : GameModel.Ingredient.values()) {
+                        Rectangle bounds = view.getInvBounds(type);
+                        if (bounds != null && isClickInStack(click, bounds) && model.getIngredientCount(type) > 0) {
+                            view.toggleIngredientSelection(type, model.getIngredientCount(type));
+                            view.repaint();
+                            break;
+                        }
                     }
                 }
             }
