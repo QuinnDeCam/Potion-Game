@@ -145,13 +145,26 @@ When the potion is discovered, have the icon linger a little longer, with the na
 # Prompt 22
 I think it is time to up the potion game. Are you ready to make new rooms? I'm thinking each room has different ingredients, can we start by changing the ingredients of the forest, and adding a cave room? In the cave there will be the crystal, the Mushroom, and also a bug. In the Forest we will have Tree sap, Frog, and keep the Leaf.
 # Results 
-(Need to test)
-before implentation plan, answered questions:
+before running, it asked two questions (which I answered below, and then it ran)
 
 # Prompt 22.5
 To answer your questions first. For the Inventory layout, I plan on adding another room and add 6 more ingredients soon, so I would like to have two columns. I like the size of the ingredients currently, so if there isn't enough space we could use the top of the screen in the brewing if needed. For the second question, yes, I will add combinations later. Also, make the rate of spawning of each ingredient really easily modifyed, so I can change them for each ingredient individually. 
+# Results
+Yayyy, new room! The Cave and Forest, with new ingredients, and working spawn rates. The only thing I don't like is how i orignally built how the ingredients spawn, which I should change it few times until i like it. Also put placeholders for images, so that when I upload a new ones for each item, (I know it's a lot of work but I love art so it works out, bc I'll be doodling pixel art and feeling productive) it will be easy to use.
 
 # Prompt 23
 Awesome! Next room is a mountain.
 It will have: Ice, Pebble, and Fur
+# Results
+Same as prompt above! it is a blank white room but it works. I think I also forgot to mention that all the things spawn in like this really specific area on the screen, in a rectangle towards the bottom, because I think in the original early versions, it chose to spawn them on the forest floor. I would like to change that to be random spawn within the bounds of the room later on.
 
+# Prompt 24
+Okay now I'm going to add three more items, a rare crystal for each room. they will each have a 1 in 32 chance of spawning. It can be the same image as the current crystal, but a different color. For the forest rare color, it is pink
+for the cav rare crystal color, it is orange
+And finally, the mountain's rare crystal is blue. 
+# Results
+It worked, but the rare cave crystal's color is a little off, and I'd like to change the tint on the mountain crystal too. And by a little off, I mean they are dull and ugly. 
+
+# Prompt 25
+Okay now the items are too close together in the ingredients on the brewing room, can you fix that?
+# Results

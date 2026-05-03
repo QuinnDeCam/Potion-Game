@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.Map;
 import java.util.EnumMap;
@@ -39,7 +40,7 @@ public class GameView extends JPanel {
 
     // Inventory bounds map
     private Map<GameModel.Ingredient, Rectangle> invBoundsMap = new EnumMap<>(GameModel.Ingredient.class);
-    
+
     private Rectangle journalButtonBounds = new Rectangle(700, 30, 60, 80);
     private Image leafImg;
     private Image mushroomImg;
@@ -64,17 +65,23 @@ public class GameView extends JPanel {
         setLayout(null);
 
         // Setup inventory bounds
-        // Left Column: Forest + Mountain
-        invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 200, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 280, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 360, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(20, 440, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(20, 520, 50, 50));
-        // Right Column: Cave + Mountain
-        invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(80, 200, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(80, 280, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(80, 360, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(80, 440, 50, 50));
+        // Left Column: Forest (x=20)
+        invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 240, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 300, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_FOREST, new Rectangle(20, 360, 50, 50));
+
+        // Middle Column: Cave (x=75)
+        invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(75, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(75, 240, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(75, 300, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_CAVE, new Rectangle(75, 360, 50, 50));
+
+        // Right Column: Mountain (x=130)
+        invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(130, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(130, 240, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(130, 300, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_MOUNTAIN, new Rectangle(130, 360, 50, 50));
 
         // Setup brewing UI
         setupBrewingUI();
@@ -573,7 +580,7 @@ public class GameView extends JPanel {
                     g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
                 }
                 break;
-                
+
             case BUG:
                 if (bugImg != null && bugImg.getWidth(null) > 0) {
                     g.drawImage(bugImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
@@ -584,18 +591,18 @@ public class GameView extends JPanel {
                     g.drawLine(bounds.x + 10, bounds.y + 25, bounds.x + bounds.width - 10, bounds.y + 25);
                 }
                 break;
-                
+
             case TREE_SAP:
                 if (treeSapImg != null && treeSapImg.getWidth(null) > 0) {
                     g.drawImage(treeSapImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
                 } else {
                     g.setColor(new Color(255, 165, 0)); // Orange
-                    int[] xPoints = {bounds.x + 25, bounds.x + 10, bounds.x + 40};
-                    int[] yPoints = {bounds.y + 10, bounds.y + 40, bounds.y + 40};
+                    int[] xPoints = { bounds.x + 25, bounds.x + 10, bounds.x + 40 };
+                    int[] yPoints = { bounds.y + 10, bounds.y + 40, bounds.y + 40 };
                     g.fillPolygon(xPoints, yPoints, 3);
                 }
                 break;
-                
+
             case FROG:
                 if (frogImg != null && frogImg.getWidth(null) > 0) {
                     g.drawImage(frogImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
@@ -607,7 +614,7 @@ public class GameView extends JPanel {
                     g.fillOval(bounds.x + 30, bounds.y + 25, 5, 5); // Eye
                 }
                 break;
-                
+
             case ICE:
                 if (iceImg != null && iceImg.getWidth(null) > 0) {
                     g.drawImage(iceImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
@@ -616,7 +623,7 @@ public class GameView extends JPanel {
                     g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
                 }
                 break;
-                
+
             case PEBBLE:
                 if (pebbleImg != null && pebbleImg.getWidth(null) > 0) {
                     g.drawImage(pebbleImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
@@ -625,7 +632,7 @@ public class GameView extends JPanel {
                     g.fillOval(bounds.x + 15, bounds.y + 15, bounds.width - 30, bounds.height - 30);
                 }
                 break;
-                
+
             case FUR:
                 if (furImg != null && furImg.getWidth(null) > 0) {
                     g.drawImage(furImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
@@ -633,6 +640,18 @@ public class GameView extends JPanel {
                     g.setColor(new Color(139, 69, 19)); // Saddle brown
                     g.fillRoundRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20, 15, 15);
                 }
+                break;
+
+            case RARE_CRYSTAL_FOREST:
+                drawTintedCrystal(g, bounds, new Color(255, 117, 177, 150)); // Pink
+                break;
+
+            case RARE_CRYSTAL_CAVE:
+                drawTintedCrystal(g, bounds, new Color(255, 142, 13, 150)); // Orange
+                break;
+
+            case RARE_CRYSTAL_MOUNTAIN:
+                drawTintedCrystal(g, bounds, new Color(58, 134, 189, 150)); // Blue
                 break;
         }
 
@@ -644,6 +663,23 @@ public class GameView extends JPanel {
             String name = ingredient.name().toLowerCase();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
             g.drawString(name, bounds.x + 5, bounds.y - 5);
+        }
+    }
+
+    private void drawTintedCrystal(Graphics g, Rectangle bounds, Color tint) {
+        if (crystalImg != null && crystalImg.getWidth(null) > 0) {
+            BufferedImage img = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = img.createGraphics();
+            g2.drawImage(crystalImg, 0, 0, bounds.width, bounds.height, null);
+            g2.setComposite(AlphaComposite.SrcAtop);
+            g2.setColor(tint);
+            g2.fillRect(0, 0, bounds.width, bounds.height);
+            g2.dispose();
+            g.drawImage(img, bounds.x, bounds.y, null);
+        } else {
+            // Fallback geometry
+            g.setColor(new Color(tint.getRed(), tint.getGreen(), tint.getBlue())); // solid color
+            g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
         }
     }
 
@@ -732,7 +768,7 @@ public class GameView extends JPanel {
         // Draw Inventory Stacks
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("Inventory", 40, 180);
+        g.drawString("Inventory", 40, 160);
 
         for (GameModel.Ingredient type : GameModel.Ingredient.values()) {
             Rectangle bounds = invBoundsMap.get(type);

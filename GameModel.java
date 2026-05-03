@@ -38,7 +38,10 @@ public class GameModel {
         FROG,
         ICE,
         PEBBLE,
-        FUR
+        FUR,
+        RARE_CRYSTAL_FOREST,
+        RARE_CRYSTAL_CAVE,
+        RARE_CRYSTAL_MOUNTAIN
     }
     
     // Potion types
@@ -51,9 +54,9 @@ public class GameModel {
     
     private Room currentRoom = Room.FOREST;
     
-    // Ingredient inventory and spawning weights
+    // Ingredient inventory and spawning chances
     private Map<Ingredient, Integer> inventory = new EnumMap<>(Ingredient.class);
-    private Map<Ingredient, Integer> spawnWeights = new EnumMap<>(Ingredient.class);
+    private Map<Ingredient, Integer> spawnChances = new EnumMap<>(Ingredient.class);
     
     public static class SpawnedIngredient {
         public Ingredient type;
@@ -79,24 +82,36 @@ public class GameModel {
     private boolean journalOpen = false;
 
     public GameModel() {
-        // Initialize inventory and weights
+        // Initialize inventory
         for (Ingredient i : Ingredient.values()) {
             inventory.put(i, 0);
-            spawnWeights.put(i, 10); // default weight
         }
         
-        // Easily modify spawn rates here:
-        spawnWeights.put(Ingredient.FROG, 5); // Example: frog is rarer
-        spawnWeights.put(Ingredient.BUG, 8);
-        spawnWeights.put(Ingredient.ICE, 10);
-        spawnWeights.put(Ingredient.PEBBLE, 10);
-        spawnWeights.put(Ingredient.FUR, 5); // Example: fur is rarer
+        // Spawn chances (1 in X chance)
+        spawnChances.put(Ingredient.TREE_SAP, 8);
+        spawnChances.put(Ingredient.FROG, 6);
+        spawnChances.put(Ingredient.LEAF, 2);
+        
+        spawnChances.put(Ingredient.CRYSTAL, 6);
+        spawnChances.put(Ingredient.BUG, 3);
+        spawnChances.put(Ingredient.MUSHROOM, 4);
+        
+        spawnChances.put(Ingredient.ICE, 2);
+        spawnChances.put(Ingredient.PEBBLE, 3);
+        spawnChances.put(Ingredient.FUR, 8);
+        
+        spawnChances.put(Ingredient.RARE_CRYSTAL_FOREST, 32);
+        spawnChances.put(Ingredient.RARE_CRYSTAL_CAVE, 32);
+        spawnChances.put(Ingredient.RARE_CRYSTAL_MOUNTAIN, 32);
         
         activeIngredientsByRoom.put(Room.FOREST, new ArrayList<>());
         activeIngredientsByRoom.put(Room.CAVE, new ArrayList<>());
         activeIngredientsByRoom.put(Room.MOUNTAIN, new ArrayList<>());
         
-        spawnRandomIngredients();
+        // Initial spawn
+        spawnForRoom(Room.FOREST);
+        spawnForRoom(Room.CAVE);
+        spawnForRoom(Room.MOUNTAIN);
     }
     
     // TODO: Player data
@@ -142,47 +157,33 @@ public class GameModel {
         return activeIngredientsByRoom.getOrDefault(room, new ArrayList<>());
     }
     
-    public void spawnRandomIngredients() {
+    public void spawnForRoom(Room room) {
         Random random = new Random();
+        Ingredient[] validTypes;
         
-        // Spawn for Forest
-        spawnInRoom(Room.FOREST, new Ingredient[]{Ingredient.LEAF, Ingredient.TREE_SAP, Ingredient.FROG}, random);
-        
-        // Spawn for Cave
-        spawnInRoom(Room.CAVE, new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG}, random);
-        
-        // Spawn for Mountain
-        spawnInRoom(Room.MOUNTAIN, new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE, Ingredient.FUR}, random);
-    }
-    
-    private void spawnInRoom(Room room, Ingredient[] validTypes, Random random) {
-        int numIngredients = (random.nextInt(5) == 0) ? 2 : 1; // 1 in 5 chance to spawn 2
+        if (room == Room.FOREST) {
+            validTypes = new Ingredient[]{Ingredient.LEAF, Ingredient.TREE_SAP, Ingredient.FROG, Ingredient.RARE_CRYSTAL_FOREST};
+        } else if (room == Room.CAVE) {
+            validTypes = new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG, Ingredient.RARE_CRYSTAL_CAVE};
+        } else if (room == Room.MOUNTAIN) {
+            validTypes = new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE, Ingredient.FUR, Ingredient.RARE_CRYSTAL_MOUNTAIN};
+        } else {
+            return;
+        }
+
         List<SpawnedIngredient> roomList = activeIngredientsByRoom.get(room);
         if (roomList == null) return;
         
-        for (int i = 0; i < numIngredients; i++) {
-            int totalWeight = 0;
-            for (Ingredient t : validTypes) {
-                totalWeight += spawnWeights.getOrDefault(t, 10);
+        // Each ingredient type rolls its own independent chance to spawn
+        for (Ingredient t : validTypes) {
+            int chance = spawnChances.getOrDefault(t, 10);
+            if (random.nextInt(chance) == 0) { // 1 in X chance
+                // Random bounds in the grass/ground area (approx x: 50-700, y: 400-500)
+                int x = 50 + random.nextInt(600);
+                int y = 400 + random.nextInt(100);
+                
+                roomList.add(new SpawnedIngredient(t, new Rectangle(x, y, 50, 50)));
             }
-            if (totalWeight == 0) continue;
-            
-            int r = random.nextInt(totalWeight);
-            Ingredient selectedType = validTypes[0];
-            int currentWeight = 0;
-            for (Ingredient t : validTypes) {
-                currentWeight += spawnWeights.getOrDefault(t, 10);
-                if (r < currentWeight) {
-                    selectedType = t;
-                    break;
-                }
-            }
-            
-            // Random bounds in the grass/ground area (approx x: 50-700, y: 400-500)
-            int x = 50 + random.nextInt(600);
-            int y = 400 + random.nextInt(100);
-            
-            roomList.add(new SpawnedIngredient(selectedType, new Rectangle(x, y, 50, 50)));
         }
     }
     

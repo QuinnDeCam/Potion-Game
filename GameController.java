@@ -13,7 +13,9 @@ public class GameController {
     private GameModel model;
     private GameView view;
     private JFrame frame;
-    private Timer respawnTimer;
+    private Timer forestTimer;
+    private Timer caveTimer;
+    private Timer mountainTimer;
 
     public GameController() {
         model = new GameModel();
@@ -128,18 +130,32 @@ public class GameController {
     }
 
     private void setupSpawnTimer() {
-        Random random = new Random();
-        int initialDelay = 8000 + random.nextInt(7001); // 8 to 15 seconds
-        respawnTimer = new Timer(initialDelay, e -> {
-            model.spawnRandomIngredients();
+        // Every 4 seconds, staggered by 1.3 seconds per room
+        int interval = 4000;
+        
+        forestTimer = new Timer(interval, e -> {
+            model.spawnForRoom(GameModel.Room.FOREST);
             view.repaint();
-            // Set random delay for the next spawn
-            int nextDelay = 8000 + random.nextInt(7001);
-            respawnTimer.setDelay(nextDelay);
         });
-
-        respawnTimer.setRepeats(true);
-        respawnTimer.start();
+        forestTimer.setInitialDelay(0);
+        forestTimer.setRepeats(true);
+        forestTimer.start();
+        
+        caveTimer = new Timer(interval, e -> {
+            model.spawnForRoom(GameModel.Room.CAVE);
+            view.repaint();
+        });
+        caveTimer.setInitialDelay(1333);
+        caveTimer.setRepeats(true);
+        caveTimer.start();
+        
+        mountainTimer = new Timer(interval, e -> {
+            model.spawnForRoom(GameModel.Room.MOUNTAIN);
+            view.repaint();
+        });
+        mountainTimer.setInitialDelay(2666);
+        mountainTimer.setRepeats(true);
+        mountainTimer.start();
     }
 
     private void setupBrewListener() {
