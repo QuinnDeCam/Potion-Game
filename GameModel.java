@@ -24,6 +24,7 @@ public class GameModel {
     public enum Room {
         FOREST,
         CAVE,
+        MOUNTAIN,
         BREWING_ROOM
     }
     
@@ -34,7 +35,10 @@ public class GameModel {
         CRYSTAL,
         BUG,
         TREE_SAP,
-        FROG
+        FROG,
+        ICE,
+        PEBBLE,
+        FUR
     }
     
     // Potion types
@@ -84,9 +88,13 @@ public class GameModel {
         // Easily modify spawn rates here:
         spawnWeights.put(Ingredient.FROG, 5); // Example: frog is rarer
         spawnWeights.put(Ingredient.BUG, 8);
+        spawnWeights.put(Ingredient.ICE, 10);
+        spawnWeights.put(Ingredient.PEBBLE, 10);
+        spawnWeights.put(Ingredient.FUR, 5); // Example: fur is rarer
         
         activeIngredientsByRoom.put(Room.FOREST, new ArrayList<>());
         activeIngredientsByRoom.put(Room.CAVE, new ArrayList<>());
+        activeIngredientsByRoom.put(Room.MOUNTAIN, new ArrayList<>());
         
         spawnRandomIngredients();
     }
@@ -142,6 +150,9 @@ public class GameModel {
         
         // Spawn for Cave
         spawnInRoom(Room.CAVE, new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG}, random);
+        
+        // Spawn for Mountain
+        spawnInRoom(Room.MOUNTAIN, new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE, Ingredient.FUR}, random);
     }
     
     private void spawnInRoom(Room room, Ingredient[] validTypes, Random random) {

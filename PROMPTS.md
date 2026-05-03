@@ -148,4 +148,10 @@ I think it is time to up the potion game. Are you ready to make new rooms? I'm t
 (Need to test)
 before implentation plan, answered questions:
 
+# Prompt 22.5
 To answer your questions first. For the Inventory layout, I plan on adding another room and add 6 more ingredients soon, so I would like to have two columns. I like the size of the ingredients currently, so if there isn't enough space we could use the top of the screen in the brewing if needed. For the second question, yes, I will add combinations later. Also, make the rate of spawning of each ingredient really easily modifyed, so I can change them for each ingredient individually. 
+
+# Prompt 23
+Awesome! Next room is a mountain.
+It will have: Ice, Pebble, and Fur
+

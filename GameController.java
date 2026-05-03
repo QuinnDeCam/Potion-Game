@@ -35,6 +35,7 @@ public class GameController {
 
         JButton forestBtn = new JButton("Forest");
         JButton caveBtn = new JButton("Cave");
+        JButton mountainBtn = new JButton("Mountain");
         JButton brewingBtn = new JButton("Brewing Room");
 
         forestBtn.addActionListener(e -> {
@@ -49,6 +50,12 @@ public class GameController {
             view.repaint();
         });
 
+        mountainBtn.addActionListener(e -> {
+            model.setCurrentRoom(GameModel.Room.MOUNTAIN);
+            view.updateUIVisibility(GameModel.Room.MOUNTAIN);
+            view.repaint();
+        });
+
         brewingBtn.addActionListener(e -> {
             model.setCurrentRoom(GameModel.Room.BREWING_ROOM);
             view.updateUIVisibility(GameModel.Room.BREWING_ROOM);
@@ -57,6 +64,7 @@ public class GameController {
 
         buttonPanel.add(forestBtn);
         buttonPanel.add(caveBtn);
+        buttonPanel.add(mountainBtn);
         buttonPanel.add(brewingBtn);
 
         // Add components to frame
@@ -91,7 +99,7 @@ public class GameController {
 
                 GameModel.Room currentRoom = model.getCurrentRoom();
 
-                if (currentRoom == GameModel.Room.FOREST || currentRoom == GameModel.Room.CAVE) {
+                if (currentRoom == GameModel.Room.FOREST || currentRoom == GameModel.Room.CAVE || currentRoom == GameModel.Room.MOUNTAIN) {
                     for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(currentRoom)) {
                         if (ingredient.bounds.contains(click)) {
                             model.collectIngredient(currentRoom, ingredient);

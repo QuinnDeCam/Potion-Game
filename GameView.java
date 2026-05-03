@@ -47,10 +47,14 @@ public class GameView extends JPanel {
     private Image bugImg;
     private Image treeSapImg;
     private Image frogImg;
+    private Image iceImg;
+    private Image pebbleImg;
+    private Image furImg;
     private Image cauldronImg;
     private Image journalImg;
     private Image forestImg;
     private Image caveImg;
+    private Image mountainImg;
     private Image bubbleImg;
 
     public GameView(GameModel model) {
@@ -60,14 +64,17 @@ public class GameView extends JPanel {
         setLayout(null);
 
         // Setup inventory bounds
-        // Left Column: Forest
+        // Left Column: Forest + Mountain
         invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 200, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 280, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 360, 50, 50));
-        // Right Column: Cave
+        invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(20, 440, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(20, 520, 50, 50));
+        // Right Column: Cave + Mountain
         invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(80, 200, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(80, 280, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(80, 360, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(80, 440, 50, 50));
 
         // Setup brewing UI
         setupBrewingUI();
@@ -79,9 +86,13 @@ public class GameView extends JPanel {
         bugImg = new ImageIcon("Bug.png").getImage();
         treeSapImg = new ImageIcon("TreeSap.png").getImage();
         frogImg = new ImageIcon("Frog.png").getImage();
+        iceImg = new ImageIcon("Ice.png").getImage();
+        pebbleImg = new ImageIcon("Pebble.png").getImage();
+        furImg = new ImageIcon("Fur.png").getImage();
         journalImg = new ImageIcon("Journal.png").getImage();
         forestImg = new ImageIcon("Forest.png").getImage();
         caveImg = new ImageIcon("Cave.png").getImage();
+        mountainImg = new ImageIcon("Mountain.png").getImage();
         bubbleImg = new ImageIcon("Bubble.png").getImage();
     }
 
@@ -471,6 +482,8 @@ public class GameView extends JPanel {
                 return "Forest";
             case CAVE:
                 return "Cave";
+            case MOUNTAIN:
+                return "Mountain";
             case BREWING_ROOM:
                 return "Brewing Room";
             default:
@@ -485,6 +498,9 @@ public class GameView extends JPanel {
                 break;
             case CAVE:
                 drawCave(g);
+                break;
+            case MOUNTAIN:
+                drawMountain(g);
                 break;
             case BREWING_ROOM:
                 drawBrewingRoom(g);
@@ -516,6 +532,20 @@ public class GameView extends JPanel {
 
         // Draw active collectible ingredients
         for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(GameModel.Room.CAVE)) {
+            drawIngredient(g, ingredient.type, ingredient.bounds, false);
+        }
+    }
+
+    private void drawMountain(Graphics g) {
+        if (mountainImg != null && mountainImg.getWidth(null) > 0) {
+            g.drawImage(mountainImg, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            g.setColor(new Color(220, 220, 230)); // Fallback mountain light gray/blue
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        // Draw active collectible ingredients
+        for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(GameModel.Room.MOUNTAIN)) {
             drawIngredient(g, ingredient.type, ingredient.bounds, false);
         }
     }
@@ -575,6 +605,33 @@ public class GameView extends JPanel {
                     g.setColor(Color.BLACK);
                     g.fillOval(bounds.x + 15, bounds.y + 25, 5, 5); // Eye
                     g.fillOval(bounds.x + 30, bounds.y + 25, 5, 5); // Eye
+                }
+                break;
+                
+            case ICE:
+                if (iceImg != null && iceImg.getWidth(null) > 0) {
+                    g.drawImage(iceImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(new Color(173, 216, 230)); // Light blue
+                    g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
+                }
+                break;
+                
+            case PEBBLE:
+                if (pebbleImg != null && pebbleImg.getWidth(null) > 0) {
+                    g.drawImage(pebbleImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(Color.GRAY);
+                    g.fillOval(bounds.x + 15, bounds.y + 15, bounds.width - 30, bounds.height - 30);
+                }
+                break;
+                
+            case FUR:
+                if (furImg != null && furImg.getWidth(null) > 0) {
+                    g.drawImage(furImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    g.setColor(new Color(139, 69, 19)); // Saddle brown
+                    g.fillRoundRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20, 15, 15);
                 }
                 break;
         }
