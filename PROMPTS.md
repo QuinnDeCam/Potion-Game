@@ -123,16 +123,15 @@ int[][] potion = {
 
 Where 
 The color pallete is this for the poison potion, 
- = {
     Color[] palette = {
-    new Color(0, 0, 0, 0),        // 0 transparent
-    new Color(179,179,179),       // 1 #B3B3B3
-    new Color(128,128,128),       // 2 White
-    new Color(181,230,29),        // 3 #B5E61D
-    new Color(56,127,62),         // 4 #387F3E
-    new Color(26,94,42),          // 5 #1A5E2A
-    new Color(142,94,74),         // 6 #8E5E4A
-    new Color(176,139,122)        // 7 #B08B7A
+    new Color(0, 0, 0, 0),        // 0
+    new Color(179,179,179),       // 1
+    new Color(128,128,128),       // 2
+    new Color(181,230,29),        // 3
+    new Color(56,127,62),         // 4
+    new Color(26,94,42),          // 5
+    new Color(142,94,74),         // 6
+    new Color(176,139,122)        // 7
 };
 
 The greens should be changed to a different color that depend on the potion. 
@@ -163,8 +162,14 @@ Okay now I'm going to add three more items, a rare crystal for each room. they w
 for the cav rare crystal color, it is orange
 And finally, the mountain's rare crystal is blue. 
 # Results
-It worked, but the rare cave crystal's color is a little off, and I'd like to change the tint on the mountain crystal too. And by a little off, I mean they are dull and ugly. 
+It worked, but the rare cave crystal's colors are a little off, and I'd like to change the tint on them. And by a little off, I mean they are dull and ugly. 
 
 # Prompt 25
-Okay now the items are too close together in the ingredients on the brewing room, can you fix that?
+Okay now the items are too close together in the ingredients on the brewing room, can you fix that? Just give them a little more space vertically, don't move them horizontally. also remove the title of the room, and lower where selected ingredents go, make sure they are centered still. 
 # Results
+Didn't give them more space, at all. But the title of the room was removed and did lower where selected ingredents go, and were a lot more centered. 
+
+# Prompt 26
+Can you seperate the ingredients more? I don't want the yellow boxes that show what is selected to overlap. Keep them all on the left side, and bring them a little bit higher, a little more to the top left part of the screen. 
+# Results
+(Need to test)

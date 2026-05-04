@@ -66,22 +66,22 @@ public class GameView extends JPanel {
 
         // Setup inventory bounds
         // Left Column: Forest (x=20)
-        invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 180, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 240, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 300, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_FOREST, new Rectangle(20, 360, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 80, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 280, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_FOREST, new Rectangle(20, 380, 50, 50));
 
-        // Middle Column: Cave (x=75)
-        invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(75, 180, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(75, 240, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(75, 300, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_CAVE, new Rectangle(75, 360, 50, 50));
+        // Middle Column: Cave (x=90)
+        invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(90, 80, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(90, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(90, 280, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_CAVE, new Rectangle(90, 380, 50, 50));
 
-        // Right Column: Mountain (x=130)
-        invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(130, 180, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(130, 240, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(130, 300, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_MOUNTAIN, new Rectangle(130, 360, 50, 50));
+        // Right Column: Mountain (x=160)
+        invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(160, 80, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(160, 180, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(160, 280, 50, 50));
+        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_MOUNTAIN, new Rectangle(160, 380, 50, 50));
 
         // Setup brewing UI
         setupBrewingUI();
@@ -295,13 +295,13 @@ public class GameView extends JPanel {
         timer.addActionListener(e -> {
             if (animPhase == 1) {
                 animDropY += 5; // Drop speed
-                if (animDropY >= 110) { // Reached cauldron (190 -> 300)
+                if (animDropY >= 70) { // Reached cauldron (230 -> 300)
                     animPhase = 2; // Brewing phase
                 }
             } else if (animPhase == 2) {
                 // 3 second wait (3000ms / 33ms = 90 frames roughly)
                 animDropY++;
-                if (animDropY >= 200) { // 90 frames of waiting
+                if (animDropY >= 160) { // 90 frames of waiting (70 + 90)
                     animPhase = 3;
                     animPotionY = -50; // start slightly inside cauldron
                 }
@@ -363,15 +363,6 @@ public class GameView extends JPanel {
         super.paintComponent(g);
 
         GameModel.Room currentRoom = model.getCurrentRoom();
-
-        // Draw room name at top
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 36));
-        String roomName = getRoomDisplayName(currentRoom);
-        FontMetrics fm = g.getFontMetrics();
-        int titleWidth = fm.stringWidth(roomName);
-        int centerX = (getWidth() - titleWidth) / 2;
-        g.drawString(roomName, centerX, 60);
 
         // Draw room-specific visual
         drawRoomVisual(g, currentRoom);
@@ -688,7 +679,7 @@ public class GameView extends JPanel {
     private void drawBrewingRoom(Graphics g) {
         // Draw cauldron image
         if (cauldronImg != null) {
-            g.drawImage(cauldronImg, 184, 300, 432, 360, this);
+            g.drawImage(cauldronImg, 250, 300, 432, 360, this);
         }
 
         // Shelf with bottles
@@ -708,15 +699,15 @@ public class GameView extends JPanel {
 
         // Draw selected ingredients in the top area (plus sign visual)
         if (selectedIngredient1 != null && animPhase < 2) {
-            drawIngredient(g, selectedIngredient1, new Rectangle(300, 190 + animDropY, 50, 50), true);
+            drawIngredient(g, selectedIngredient1, new Rectangle(380, 230 + animDropY, 50, 50), true);
         }
         if (!isAnimating) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 24));
-            g.drawString("+", 380, 220);
+            g.drawString("+", 455, 260); // 380+50=430, 490... center is ~460
         }
         if (selectedIngredient2 != null && animPhase < 2) {
-            drawIngredient(g, selectedIngredient2, new Rectangle(420, 190 + animDropY, 50, 50), true);
+            drawIngredient(g, selectedIngredient2, new Rectangle(490, 230 + animDropY, 50, 50), true);
         }
 
         // Draw bubbles during brewing phase
@@ -725,9 +716,9 @@ public class GameView extends JPanel {
             int bubble1Y = 320 - ((animDropY * 2) % 100);
             int bubble2Y = 340 - ((animDropY * 3) % 120);
             int bubble3Y = 330 - ((animDropY * 4) % 110);
-            g.drawImage(bubbleImg, 380, bubble1Y, 30, 30, this);
-            g.drawImage(bubbleImg, 420, bubble2Y, 20, 20, this);
-            g.drawImage(bubbleImg, 350, bubble3Y, 25, 25, this);
+            g.drawImage(bubbleImg, 446, bubble1Y, 30, 30, this);
+            g.drawImage(bubbleImg, 486, bubble2Y, 20, 20, this);
+            g.drawImage(bubbleImg, 416, bubble3Y, 25, 25, this);
         }
 
         // Draw emerging potion
@@ -735,7 +726,7 @@ public class GameView extends JPanel {
             Graphics2D g2d = (Graphics2D) g.create();
 
             if (animPhase == 3 || animPhase == 4) {
-                drawPotionIcon(g2d, resultPotion, 360, 300 - animPotionY, 5);
+                drawPotionIcon(g2d, resultPotion, 426, 300 - animPotionY, 5);
 
                 if (animPhase == 4) {
                     // Draw "New Discovery!" above
@@ -768,7 +759,7 @@ public class GameView extends JPanel {
         // Draw Inventory Stacks
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("Inventory", 40, 160);
+        g.drawString("Inventory", 40, 40);
 
         for (GameModel.Ingredient type : GameModel.Ingredient.values()) {
             Rectangle bounds = invBoundsMap.get(type);

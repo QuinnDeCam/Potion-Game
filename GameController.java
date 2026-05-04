@@ -101,7 +101,8 @@ public class GameController {
 
                 GameModel.Room currentRoom = model.getCurrentRoom();
 
-                if (currentRoom == GameModel.Room.FOREST || currentRoom == GameModel.Room.CAVE || currentRoom == GameModel.Room.MOUNTAIN) {
+                if (currentRoom == GameModel.Room.FOREST || currentRoom == GameModel.Room.CAVE
+                        || currentRoom == GameModel.Room.MOUNTAIN) {
                     for (GameModel.SpawnedIngredient ingredient : model.getActiveIngredients(currentRoom)) {
                         if (ingredient.bounds.contains(click)) {
                             model.collectIngredient(currentRoom, ingredient);
@@ -132,7 +133,7 @@ public class GameController {
     private void setupSpawnTimer() {
         // Every 4 seconds, staggered by 1.3 seconds per room
         int interval = 4000;
-        
+
         forestTimer = new Timer(interval, e -> {
             model.spawnForRoom(GameModel.Room.FOREST);
             view.repaint();
@@ -140,7 +141,7 @@ public class GameController {
         forestTimer.setInitialDelay(0);
         forestTimer.setRepeats(true);
         forestTimer.start();
-        
+
         caveTimer = new Timer(interval, e -> {
             model.spawnForRoom(GameModel.Room.CAVE);
             view.repaint();
@@ -148,7 +149,7 @@ public class GameController {
         caveTimer.setInitialDelay(1333);
         caveTimer.setRepeats(true);
         caveTimer.start();
-        
+
         mountainTimer = new Timer(interval, e -> {
             model.spawnForRoom(GameModel.Room.MOUNTAIN);
             view.repaint();
