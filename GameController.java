@@ -91,10 +91,16 @@ public class GameController {
                     return;
                 }
 
-                // If journal is open, clicking anywhere else closes it
+                // If journal is open, handle pagination or close it
                 if (model.isJournalOpen()) {
-                    model.setJournalOpen(false);
-                    view.updateUIVisibility(model.getCurrentRoom());
+                    if (view.getPrevPageBounds().contains(click)) {
+                        view.prevPage();
+                    } else if (view.getNextPageBounds().contains(click)) {
+                        view.nextPage();
+                    } else {
+                        model.setJournalOpen(false);
+                        view.updateUIVisibility(model.getCurrentRoom());
+                    }
                     view.repaint();
                     return;
                 }
@@ -173,18 +179,11 @@ public class GameController {
             GameModel.Potion result = model.brew(ing1, ing2);
 
             String resultText;
-            switch (result) {
-                case HEALING_POTION:
-                    resultText = "Healing Potion!";
-                    break;
-                case POISON_POTION:
-                    resultText = "Poison Potion!";
-                    break;
-                case STRENGTH_POTION:
-                    resultText = "Strength Potion!";
-                    break;
-                default:
-                    resultText = "Unknown Mixture";
+            if (result == GameModel.Potion.UNKNOWN_MIXTURE) {
+                resultText = "Unknown Mixture";
+            } else {
+                resultText = result.name().toLowerCase().replace("_", " ");
+                resultText = resultText.substring(0, 1).toUpperCase() + resultText.substring(1) + "!";
             }
 
             String finalResultText = resultText;

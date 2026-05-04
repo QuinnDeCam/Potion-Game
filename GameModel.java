@@ -46,9 +46,30 @@ public class GameModel {
     
     // Potion types
     public enum Potion {
-        HEALING_POTION,
-        POISON_POTION,
-        STRENGTH_POTION,
+        STICKY_LIQUID,
+        TINY_VIAL,
+        MUDDLED_MIXTURE,
+        HEAVY_POTION,
+        NIGHT_VISION_POTION,
+        GLOW_POTION,
+        FUZZY_POTION,
+        BUG_JUICE,
+        FRIEND_POTION,
+        SPECIAL_FRIEND_POTION,
+        SPICY_WATER,
+        HOPPING_TONIC,
+        LEAF_JUICE,
+        SPIDERMANS_BREW,
+        ALLERGIC_REACTION_IN_A_BOTTLE,
+        GROWING_POTION,
+        RAMUNE,
+        ROCKS_ON_THE_ROCKS,
+        COLD_BLOODED,
+        DRUG_DOSE,
+        SPECKLED_SKIN_SERUM,
+        GLASS_SKIN_SERUM,
+        YELLOW_SNOW_CONE_CONCOCTION,
+        WATER,
         UNKNOWN_MIXTURE
     }
     
@@ -194,6 +215,10 @@ public class GameModel {
         }
     }
     
+    private boolean matches(Ingredient i1, Ingredient i2, Ingredient a, Ingredient b) {
+        return (i1 == a && i2 == b) || (i1 == b && i2 == a);
+    }
+    
     // Brewing system
     public Potion brew(Ingredient ingredient1, Ingredient ingredient2) {
         // Check if player has enough ingredients
@@ -207,15 +232,59 @@ public class GameModel {
         useIngredient(ingredient2);
         
         // Determine recipe (order doesn't matter)
-        if ((ingredient1 == Ingredient.LEAF && ingredient2 == Ingredient.CRYSTAL) ||
-            (ingredient1 == Ingredient.CRYSTAL && ingredient2 == Ingredient.LEAF)) {
-            lastBrewedPotion = Potion.HEALING_POTION;
-        } else if ((ingredient1 == Ingredient.CRYSTAL && ingredient2 == Ingredient.MUSHROOM) ||
-                   (ingredient1 == Ingredient.MUSHROOM && ingredient2 == Ingredient.CRYSTAL)) {
-            lastBrewedPotion = Potion.POISON_POTION;
-        } else if ((ingredient1 == Ingredient.MUSHROOM && ingredient2 == Ingredient.LEAF) ||
-                   (ingredient1 == Ingredient.LEAF && ingredient2 == Ingredient.MUSHROOM)) {
-            lastBrewedPotion = Potion.STRENGTH_POTION;
+        if (matches(ingredient1, ingredient2, Ingredient.TREE_SAP, Ingredient.TREE_SAP) ||
+            matches(ingredient1, ingredient2, Ingredient.TREE_SAP, Ingredient.ICE) ||
+            matches(ingredient1, ingredient2, Ingredient.TREE_SAP, Ingredient.LEAF)) {
+            lastBrewedPotion = Potion.STICKY_LIQUID;
+        } else if (matches(ingredient1, ingredient2, Ingredient.TREE_SAP, Ingredient.CRYSTAL)) {
+            lastBrewedPotion = Potion.TINY_VIAL;
+        } else if (matches(ingredient1, ingredient2, Ingredient.TREE_SAP, Ingredient.FUR)) {
+            lastBrewedPotion = Potion.MUDDLED_MIXTURE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.PEBBLE, Ingredient.PEBBLE) ||
+                   matches(ingredient1, ingredient2, Ingredient.PEBBLE, Ingredient.CRYSTAL)) {
+            lastBrewedPotion = Potion.HEAVY_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.FROG)) {
+            lastBrewedPotion = Potion.NIGHT_VISION_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.MUSHROOM) ||
+                   matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.CRYSTAL)) {
+            lastBrewedPotion = Potion.GLOW_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.FUR, Ingredient.FUR)) {
+            lastBrewedPotion = Potion.FUZZY_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.BUG)) {
+            lastBrewedPotion = Potion.BUG_JUICE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.PEBBLE, Ingredient.FUR)) {
+            lastBrewedPotion = Potion.FRIEND_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.CRYSTAL, Ingredient.FUR)) {
+            lastBrewedPotion = Potion.SPECIAL_FRIEND_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.ICE, Ingredient.RARE_CRYSTAL_CAVE)) {
+            lastBrewedPotion = Potion.SPICY_WATER;
+        } else if (matches(ingredient1, ingredient2, Ingredient.FROG, Ingredient.FROG)) {
+            lastBrewedPotion = Potion.HOPPING_TONIC;
+        } else if (matches(ingredient1, ingredient2, Ingredient.LEAF, Ingredient.LEAF)) {
+            lastBrewedPotion = Potion.LEAF_JUICE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.TREE_SAP) ||
+                   matches(ingredient1, ingredient2, Ingredient.BUG, Ingredient.FUR)) {
+            lastBrewedPotion = Potion.SPIDERMANS_BREW;
+        } else if (matches(ingredient1, ingredient2, Ingredient.FUR, Ingredient.FROG)) {
+            lastBrewedPotion = Potion.ALLERGIC_REACTION_IN_A_BOTTLE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.LEAF, Ingredient.MUSHROOM)) {
+            lastBrewedPotion = Potion.GROWING_POTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.PEBBLE, Ingredient.LEAF)) {
+            lastBrewedPotion = Potion.RAMUNE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.ICE, Ingredient.PEBBLE)) {
+            lastBrewedPotion = Potion.ROCKS_ON_THE_ROCKS;
+        } else if (matches(ingredient1, ingredient2, Ingredient.FROG, Ingredient.ICE)) {
+            lastBrewedPotion = Potion.COLD_BLOODED;
+        } else if (matches(ingredient1, ingredient2, Ingredient.MUSHROOM, Ingredient.CRYSTAL)) {
+            lastBrewedPotion = Potion.DRUG_DOSE;
+        } else if (matches(ingredient1, ingredient2, Ingredient.MUSHROOM, Ingredient.FROG)) {
+            lastBrewedPotion = Potion.SPECKLED_SKIN_SERUM;
+        } else if (matches(ingredient1, ingredient2, Ingredient.LEAF, Ingredient.FROG)) {
+            lastBrewedPotion = Potion.GLASS_SKIN_SERUM;
+        } else if (matches(ingredient1, ingredient2, Ingredient.FUR, Ingredient.ICE)) {
+            lastBrewedPotion = Potion.YELLOW_SNOW_CONE_CONCOCTION;
+        } else if (matches(ingredient1, ingredient2, Ingredient.ICE, Ingredient.ICE)) {
+            lastBrewedPotion = Potion.WATER;
         } else {
             lastBrewedPotion = Potion.UNKNOWN_MIXTURE;
         }
@@ -239,14 +308,31 @@ public class GameModel {
     
     public Ingredient[] getRecipe(Potion p) {
         switch (p) {
-            case HEALING_POTION: 
-                return new Ingredient[]{Ingredient.LEAF, Ingredient.CRYSTAL};
-            case POISON_POTION: 
-                return new Ingredient[]{Ingredient.CRYSTAL, Ingredient.MUSHROOM};
-            case STRENGTH_POTION: 
-                return new Ingredient[]{Ingredient.MUSHROOM, Ingredient.LEAF};
-            default: 
-                return null;
+            case STICKY_LIQUID: return new Ingredient[]{Ingredient.TREE_SAP, Ingredient.TREE_SAP};
+            case TINY_VIAL: return new Ingredient[]{Ingredient.TREE_SAP, Ingredient.CRYSTAL};
+            case MUDDLED_MIXTURE: return new Ingredient[]{Ingredient.TREE_SAP, Ingredient.FUR};
+            case HEAVY_POTION: return new Ingredient[]{Ingredient.PEBBLE, Ingredient.PEBBLE};
+            case NIGHT_VISION_POTION: return new Ingredient[]{Ingredient.BUG, Ingredient.FROG};
+            case GLOW_POTION: return new Ingredient[]{Ingredient.BUG, Ingredient.MUSHROOM};
+            case FUZZY_POTION: return new Ingredient[]{Ingredient.FUR, Ingredient.FUR};
+            case BUG_JUICE: return new Ingredient[]{Ingredient.BUG, Ingredient.BUG};
+            case FRIEND_POTION: return new Ingredient[]{Ingredient.PEBBLE, Ingredient.FUR};
+            case SPECIAL_FRIEND_POTION: return new Ingredient[]{Ingredient.CRYSTAL, Ingredient.FUR};
+            case SPICY_WATER: return new Ingredient[]{Ingredient.ICE, Ingredient.RARE_CRYSTAL_CAVE};
+            case HOPPING_TONIC: return new Ingredient[]{Ingredient.FROG, Ingredient.FROG};
+            case LEAF_JUICE: return new Ingredient[]{Ingredient.LEAF, Ingredient.LEAF};
+            case SPIDERMANS_BREW: return new Ingredient[]{Ingredient.BUG, Ingredient.TREE_SAP};
+            case ALLERGIC_REACTION_IN_A_BOTTLE: return new Ingredient[]{Ingredient.FUR, Ingredient.FROG};
+            case GROWING_POTION: return new Ingredient[]{Ingredient.LEAF, Ingredient.MUSHROOM};
+            case RAMUNE: return new Ingredient[]{Ingredient.PEBBLE, Ingredient.LEAF};
+            case ROCKS_ON_THE_ROCKS: return new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE};
+            case COLD_BLOODED: return new Ingredient[]{Ingredient.FROG, Ingredient.ICE};
+            case DRUG_DOSE: return new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL};
+            case SPECKLED_SKIN_SERUM: return new Ingredient[]{Ingredient.MUSHROOM, Ingredient.FROG};
+            case GLASS_SKIN_SERUM: return new Ingredient[]{Ingredient.LEAF, Ingredient.FROG};
+            case YELLOW_SNOW_CONE_CONCOCTION: return new Ingredient[]{Ingredient.FUR, Ingredient.ICE};
+            case WATER: return new Ingredient[]{Ingredient.ICE, Ingredient.ICE};
+            default: return null;
         }
     }
     

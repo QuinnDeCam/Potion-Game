@@ -172,4 +172,46 @@ Didn't give them more space, at all. But the title of the room was removed and d
 # Prompt 26
 Can you seperate the ingredients more? I don't want the yellow boxes that show what is selected to overlap. Keep them all on the left side, and bring them a little bit higher, a little more to the top left part of the screen. 
 # Results
+I swear there is enough space for them without moving the cauldron, but it decided to move the cauldron over to the left a lot. I think it's actually fine, but the ingredient selected and the labels for the potions are not in the right spot over the cauldron now.  
+
+# Prompt 27
+Are you ready to up the potion game? I would like to now have 28 combinations of ingredients, to have 23 potions to the game. We might have to change how the potion journal looks.
+I have a list of the combinations I would like to add.
+# Results
 (Need to test)
+
+# Prompt 27.5 (Responding to Implementation Plan)
+I think I would prefer arrow buttons for the pages of the journal! (If you could make the icons a little bigger that would be great too, because some will have more custom ones)
+
+Here is the list!
+
+Sap + Sap = Sticky Liquid
+Sap + Ice = Sticky Liquid
+Sap + Crystal = Tiny Vial
+Sap + Leaf = Sticky Liquid
+Sap + Fur = Muddled Mixture 
+Pebble + Pebble = Heavy Potion
+Pebble + Crystal = Heavy Potion
+Bug + Frog = Night Vision Potion
+Bug + Mushroom = Glow Potion
+Bug + Crystal = Glow Potion
+Fur + Fur = Fuzzy Potion
+Bug + Bug = Bug Juice
+Pebble + Fur = Friend Potion 
+Crystal + Fur = Special Friend Potion
+Ice + Rare Cave Crystal = SPICY WATER
+Frog + Frog = Hopping Tonic
+Leaf + Leaf = Leaf Juice
+Bug + Sap = Spiderman’s Brew
+Bug + Fur = Spiderman’s Brew
+Fur + Frog = Allergic Reaction in a Bottle 
+Leaf + Mushroom = Growing Potion
+Pebble + Leaf = Ramune
+Ice + Pebble = Rocks on the Rocks
+Frog + Ice = Cold Blooded 
+Mushroom + Crystal = Drug Dose
+Mushroom + Frog = Speckled Skin Serum
+Leaf + Frog = Glass Skin Serum (Translucency)  
+Fur + Ice = Yellow Snow Cone Concoction
+Ice + Ice = Water
+
