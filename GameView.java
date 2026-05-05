@@ -16,6 +16,7 @@ public class GameView extends JPanel {
     // Brewing UI components
     private JButton brewButton;
     private JLabel resultLabel;
+    private JButton startButton;
 
     // Selected ingredients for brewing
     private GameModel.Ingredient selectedIngredient1 = null;
@@ -86,8 +87,9 @@ public class GameView extends JPanel {
         invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(160, 280, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_MOUNTAIN, new Rectangle(160, 380, 50, 50));
 
-        // Setup brewing UI
+        // Setup UI
         setupBrewingUI();
+        setupStartUI();
 
         cauldronImg = new ImageIcon("images/Cauldron.png").getImage();
         leafImg = new ImageIcon("images/Leaf.png").getImage();
@@ -197,22 +199,35 @@ public class GameView extends JPanel {
         resultLabel.setForeground(Color.YELLOW);
         resultLabel.setFont(new Font("Arial", Font.BOLD, 20));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        resultLabel.setBounds(266, 260, 400, 30);
+        resultLabel.setBounds(266, 180, 400, 30);
         add(resultLabel);
 
         updateUIVisibility(model.getCurrentRoom());
     }
 
+    private void setupStartUI() {
+        startButton = new JButton("Start");
+        startButton.setBounds(350, 450, 100, 40);
+        startButton.setFont(new Font("Arial", Font.BOLD, 20));
+        add(startButton);
+    }
+
     public void updateUIVisibility(GameModel.Room currentRoom) {
         boolean isBrewing = (currentRoom == GameModel.Room.BREWING_ROOM) && !model.isJournalOpen();
+        boolean isStart = (currentRoom == GameModel.Room.START_SCREEN);
+        
         if (brewButton != null) {
             brewButton.setVisible(isBrewing);
             if (model.hasWon()) {
                 brewButton.setEnabled(false);
             }
         }
-        if (resultLabel != null)
+        if (resultLabel != null) {
             resultLabel.setVisible(isBrewing);
+        }
+        if (startButton != null) {
+            startButton.setVisible(isStart);
+        }
     }
 
     // Getters for brewing components (used by controller)
@@ -222,6 +237,10 @@ public class GameView extends JPanel {
 
     public JLabel getResultLabel() {
         return resultLabel;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
     }
 
     // Getters for inventory bounds (used by controller for click detection)
@@ -578,6 +597,44 @@ public class GameView extends JPanel {
             case BREWING_ROOM:
                 drawBrewingRoom(g);
                 break;
+            case START_SCREEN:
+                drawStartScreen(g);
+                break;
+        }
+    }
+
+    private void drawStartScreen(Graphics g) {
+        // Draw a dark tinted forest background
+        if (forestImg != null && forestImg.getWidth(null) > 0) {
+            g.drawImage(forestImg, 0, 0, getWidth(), getHeight(), this);
+        }
+        g.setColor(new Color(0, 0, 0, 180)); // Dark overlay
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // Title
+        g.setColor(new Color(255, 215, 0)); // Gold
+        g.setFont(new Font("Georgia", Font.BOLD, 64));
+        FontMetrics fmTitle = g.getFontMetrics();
+        int titleWidth = fmTitle.stringWidth("Potion Finder");
+        g.drawString("Potion Finder", (getWidth() - titleWidth) / 2, 150);
+
+        // Instructions
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.PLAIN, 18));
+        String[] instructions = {
+            "You are an ambitious alchemist, on a quest to reach your full potential and discover",
+            "all possible magical ingredients that help you make every potion recipe you can!",
+            "",
+            "Travel to the Forest, Cave, and Mountain to collect ingredients that spawn over time.",
+            "Combine them in the Brewing Room to discover new potions and fill your Journal!"
+        };
+
+        int y = 250;
+        FontMetrics fmInstr = g.getFontMetrics();
+        for (String line : instructions) {
+            int lineWidth = fmInstr.stringWidth(line);
+            g.drawString(line, (getWidth() - lineWidth) / 2, y);
+            y += 30;
         }
     }
 

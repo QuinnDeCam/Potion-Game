@@ -230,4 +230,33 @@ Perfectly sized icons, and the backgrounds are now correct!
 
 # Prompt 29
 Yayy! Now, when there is a potion coming out of the cauldron, can the yellow text be more centered above the Cauldron. It also does not need to say what the resulting potion is, if there is a label. The labels on the potions coming out of the cauldron are also off center, could you fix that? Finally, don't have a potion bottle for unknown mixtures.
+# Results
+Looks a little funny, but did what I meant to. 
+
+# Prompt 30
+Can the yellow label that says "New discovery" or "Unknown mixture" be above the selected ingredients?
+Sucessfull!
+
+# Prompt 31
+Now can the spawning of ingredients only occur if the player is in that room?
+# Results
+Sucessfull! GameController.java has room timers that check if you are in that room before spawning an ingredient
+
+# Prompt 32
+Now can you add a Start screen? When you hit start, go first to the brewing room With a start button, a Title (Potion Finder) and have a short inscructions with something like this:
+You are an ambitious alchemist, on a quest to reach your full potential and discover all possible magical ingredients that help you make every potion recipe you can! 
+Mention how you collect ingredients or something like that
+# Results
+Created an awesome start screen for Potion Finder! 
+Major changes:
+GameModel: Added Room.START_SCREEN
+GameView: Added start screen background, title text, and instructions
+GameController: Added start button and transition logic
+Brewing Room: Now opens with the start screen displayed.
+However, the cauldron looks weird, like it was placed lower that it normally was. 
+
+# Prompt 33
+After that, the cauldron looks like it was moved down. Can we put it back to where it was?
+# Results
+Cauldron is fixed! Apparently when the navigation bar was removed for the Start Screen, the game window calculated its total height without the buttons at the bottom. When Start was clicked and the buttons suddenly appeared, the game window didn't get bigger—instead, it squished the main game area (the Brewing Room) upwards by about 40 pixels to make room for them! This made the bottom of the cauldron get cut off, giving the illusion that it had moved downwards.
 

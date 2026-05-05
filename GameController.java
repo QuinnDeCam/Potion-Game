@@ -16,6 +16,7 @@ public class GameController {
     private Timer forestTimer;
     private Timer caveTimer;
     private Timer mountainTimer;
+    private JPanel buttonPanel;
 
     public GameController() {
         model = new GameModel();
@@ -24,6 +25,7 @@ public class GameController {
         setupFrame();
         setupMouseListener();
         setupBrewListener();
+        setupStartListener();
         setupSpawnTimer();
     }
 
@@ -32,7 +34,7 @@ public class GameController {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create button panel for room navigation
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setBackground(Color.DARK_GRAY);
 
         JButton forestBtn = new JButton("Forest");
@@ -73,6 +75,7 @@ public class GameController {
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.add(view, BorderLayout.CENTER);
         frame.pack();
+        buttonPanel.setVisible(false); // Hide until start button is clicked
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -141,24 +144,30 @@ public class GameController {
         int interval = 4000;
 
         forestTimer = new Timer(interval, e -> {
-            model.spawnForRoom(GameModel.Room.FOREST);
-            view.repaint();
+            if (model.getCurrentRoom() == GameModel.Room.FOREST) {
+                model.spawnForRoom(GameModel.Room.FOREST);
+                view.repaint();
+            }
         });
         forestTimer.setInitialDelay(0);
         forestTimer.setRepeats(true);
         forestTimer.start();
 
         caveTimer = new Timer(interval, e -> {
-            model.spawnForRoom(GameModel.Room.CAVE);
-            view.repaint();
+            if (model.getCurrentRoom() == GameModel.Room.CAVE) {
+                model.spawnForRoom(GameModel.Room.CAVE);
+                view.repaint();
+            }
         });
         caveTimer.setInitialDelay(1333);
         caveTimer.setRepeats(true);
         caveTimer.start();
 
         mountainTimer = new Timer(interval, e -> {
-            model.spawnForRoom(GameModel.Room.MOUNTAIN);
-            view.repaint();
+            if (model.getCurrentRoom() == GameModel.Room.MOUNTAIN) {
+                model.spawnForRoom(GameModel.Room.MOUNTAIN);
+                view.repaint();
+            }
         });
         mountainTimer.setInitialDelay(2666);
         mountainTimer.setRepeats(true);
@@ -202,6 +211,17 @@ public class GameController {
                 view.repaint();
             });
         });
+    }
+
+    private void setupStartListener() {
+        if (view.getStartButton() != null) {
+            view.getStartButton().addActionListener(e -> {
+                model.setCurrentRoom(GameModel.Room.BREWING_ROOM);
+                view.updateUIVisibility(GameModel.Room.BREWING_ROOM);
+                buttonPanel.setVisible(true);
+                view.repaint();
+            });
+        }
     }
 
     public static void main(String[] args) {

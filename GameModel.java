@@ -25,7 +25,8 @@ public class GameModel {
         FOREST,
         CAVE,
         MOUNTAIN,
-        BREWING_ROOM
+        BREWING_ROOM,
+        START_SCREEN
     }
     
     // Ingredient types
@@ -73,7 +74,7 @@ public class GameModel {
         UNKNOWN_MIXTURE
     }
     
-    private Room currentRoom = Room.FOREST;
+    private Room currentRoom = Room.START_SCREEN;
     
     // Ingredient inventory and spawning chances
     private Map<Ingredient, Integer> inventory = new EnumMap<>(Ingredient.class);
