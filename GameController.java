@@ -181,9 +181,10 @@ public class GameController {
             String resultText;
             if (result == GameModel.Potion.UNKNOWN_MIXTURE) {
                 resultText = "Unknown Mixture";
+            } else if (model.wasLastBrewNewDiscovery()) {
+                resultText = "New Discovery!";
             } else {
-                resultText = result.name().toLowerCase().replace("_", " ");
-                resultText = resultText.substring(0, 1).toUpperCase() + resultText.substring(1) + "!";
+                resultText = "";
             }
 
             String finalResultText = resultText;

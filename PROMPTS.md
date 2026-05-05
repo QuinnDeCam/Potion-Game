@@ -215,3 +215,19 @@ Leaf + Frog = Glass Skin Serum (Translucency)
 Fur + Ice = Yellow Snow Cone Concoction
 Ice + Ice = Water
 
+# Results 
+Sucess! Added all New Potion Combinations to GameModel.java
+Replaced the old potions with a brand new list of 24 distinct potions (like Spicy Water, Night Vision Potion, Spiderman's Brew, etc.) 
+Re-wrote the getRecipe logic to output clean readable text in the journal (Formatted "rare_crystal_cave" to "Crystal", which I don't like, I would like to specify it's the Rare Cave Crystal instead).
+Upgraded Journal Interface in GameView.java, implemented a two-column Layout to handle the 24 potions. The journal is now wider and has a two-column spread (acting like a real open book with a spine down the middle).
+Added Prev and Next > arrow buttons. The journal now easily flips through multiple pages, displaying 10 potions per page (5 per column). Upgraded Icons: The pixel sizes for the potion icons have been scaled up from 2x to 3x, making them 50% larger. Generated 24 distinct color palettes for the potions so each of the 24 default icons look unique unless I add custom artwork. (My favorite is the Spiderman's Brew)
+
+# Prompt 28
+Time for design changes! I can you replace The frog with the Frog.png, the Ice with Ice.png, the Fur with Fur.png, the pebble with the Pebble.png,  the Sap with Sap.png, and the Bug with Bug.png
+Then the Rare crystals now have their own images! Can you replace the Rare cave Crystal with Orange.png, the mountain crystal with the Blue.png and the rare forest crystal with Pink.png. Finally, can you change the backgrounds of the Cave and Mountain rooms with Cave.png and Mountain.png respectivly?
+# Results
+Perfectly sized icons, and the backgrounds are now correct! 
+
+# Prompt 29
+Yayy! Now, when there is a potion coming out of the cauldron, can the yellow text be more centered above the Cauldron. It also does not need to say what the resulting potion is, if there is a label. The labels on the potions coming out of the cauldron are also off center, could you fix that? Finally, don't have a potion bottle for unknown mixtures.
+

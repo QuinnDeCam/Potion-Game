@@ -57,6 +57,9 @@ public class GameView extends JPanel {
     private Image caveImg;
     private Image mountainImg;
     private Image bubbleImg;
+    private Image rareForestImg;
+    private Image rareCaveImg;
+    private Image rareMountainImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -86,21 +89,24 @@ public class GameView extends JPanel {
         // Setup brewing UI
         setupBrewingUI();
 
-        cauldronImg = new ImageIcon("Cauldron.png").getImage();
-        leafImg = new ImageIcon("Leaf.png").getImage();
-        mushroomImg = new ImageIcon("Mushroom.png").getImage();
-        crystalImg = new ImageIcon("Crystal.png").getImage();
-        bugImg = new ImageIcon("Bug.png").getImage();
-        treeSapImg = new ImageIcon("TreeSap.png").getImage();
-        frogImg = new ImageIcon("Frog.png").getImage();
-        iceImg = new ImageIcon("Ice.png").getImage();
-        pebbleImg = new ImageIcon("Pebble.png").getImage();
-        furImg = new ImageIcon("Fur.png").getImage();
-        journalImg = new ImageIcon("Journal.png").getImage();
-        forestImg = new ImageIcon("Forest.png").getImage();
-        caveImg = new ImageIcon("Cave.png").getImage();
-        mountainImg = new ImageIcon("Mountain.png").getImage();
-        bubbleImg = new ImageIcon("Bubble.png").getImage();
+        cauldronImg = new ImageIcon("images/Cauldron.png").getImage();
+        leafImg = new ImageIcon("images/Leaf.png").getImage();
+        mushroomImg = new ImageIcon("images/Mushroom.png").getImage();
+        crystalImg = new ImageIcon("images/Crystal.png").getImage();
+        bugImg = new ImageIcon("images/Bug.png").getImage();
+        treeSapImg = new ImageIcon("images/Sap.png").getImage();
+        frogImg = new ImageIcon("images/Frog.png").getImage();
+        iceImg = new ImageIcon("images/Ice.png").getImage();
+        pebbleImg = new ImageIcon("images/Pebble.png").getImage();
+        furImg = new ImageIcon("images/Fur.png").getImage();
+        journalImg = new ImageIcon("images/Journal.png").getImage();
+        forestImg = new ImageIcon("images/Forest.png").getImage();
+        caveImg = new ImageIcon("images/Cave.png").getImage();
+        mountainImg = new ImageIcon("images/Mountain.png").getImage();
+        bubbleImg = new ImageIcon("images/Bubble.png").getImage();
+        rareForestImg = new ImageIcon("images/Pink.png").getImage();
+        rareCaveImg = new ImageIcon("images/Orange.png").getImage();
+        rareMountainImg = new ImageIcon("images/Blue.png").getImage();
     }
 
     public Rectangle getJournalButtonBounds() {
@@ -191,7 +197,7 @@ public class GameView extends JPanel {
         resultLabel.setForeground(Color.YELLOW);
         resultLabel.setFont(new Font("Arial", Font.BOLD, 20));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        resultLabel.setBounds(200, 300, 400, 30);
+        resultLabel.setBounds(266, 260, 400, 30);
         add(resultLabel);
 
         updateUIVisibility(model.getCurrentRoom());
@@ -703,15 +709,27 @@ public class GameView extends JPanel {
                 break;
 
             case RARE_CRYSTAL_FOREST:
-                drawTintedCrystal(g, bounds, new Color(255, 117, 177, 150)); // Pink
+                if (rareForestImg != null && rareForestImg.getWidth(null) > 0) {
+                    g.drawImage(rareForestImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    drawTintedCrystal(g, bounds, new Color(255, 117, 177, 150)); // Pink
+                }
                 break;
 
             case RARE_CRYSTAL_CAVE:
-                drawTintedCrystal(g, bounds, new Color(255, 142, 13, 150)); // Orange
+                if (rareCaveImg != null && rareCaveImg.getWidth(null) > 0) {
+                    g.drawImage(rareCaveImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    drawTintedCrystal(g, bounds, new Color(255, 142, 13, 150)); // Orange
+                }
                 break;
 
             case RARE_CRYSTAL_MOUNTAIN:
-                drawTintedCrystal(g, bounds, new Color(58, 134, 189, 150)); // Blue
+                if (rareMountainImg != null && rareMountainImg.getWidth(null) > 0) {
+                    g.drawImage(rareMountainImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
+                } else {
+                    drawTintedCrystal(g, bounds, new Color(58, 134, 189, 150)); // Blue
+                }
                 break;
         }
 
@@ -791,7 +809,7 @@ public class GameView extends JPanel {
         }
 
         // Draw emerging potion
-        if (animPhase >= 3 && resultPotion != null) {
+        if (animPhase >= 3 && resultPotion != null && resultPotion != GameModel.Potion.UNKNOWN_MIXTURE) {
             Graphics2D g2d = (Graphics2D) g.create();
 
             if (animPhase == 3 || animPhase == 4) {
@@ -801,16 +819,19 @@ public class GameView extends JPanel {
                     // Draw "New Discovery!" above
                     g2d.setColor(Color.YELLOW);
                     g2d.setFont(new Font("Georgia", Font.BOLD, 20));
-                    g2d.drawString("New Discovery!", 310, 300 - animPotionY - 20);
-                } else {
-                    // Text to show what it is
-                    g2d.setColor(Color.WHITE);
-                    g2d.setFont(new Font("Arial", Font.BOLD, 12));
-                    String name = resultPotion.name().replace("_POTION", "");
-                    if (resultPotion == GameModel.Potion.UNKNOWN_MIXTURE)
-                        name = "UNKNOWN";
-                    g2d.drawString(name, 365, 300 - animPotionY + 95);
+                    FontMetrics fmYellow = g2d.getFontMetrics();
+                    int yellowWidth = fmYellow.stringWidth("New Discovery!");
+                    g2d.drawString("New Discovery!", 451 - yellowWidth / 2, 300 - animPotionY - 20);
                 }
+                
+                // Text to show what it is
+                g2d.setColor(Color.WHITE);
+                g2d.setFont(new Font("Arial", Font.BOLD, 12));
+                String name = resultPotion.name().replace("_POTION", "");
+                name = name.replace("_", " ");
+                FontMetrics fmWhite = g2d.getFontMetrics();
+                int whiteWidth = fmWhite.stringWidth(name);
+                g2d.drawString(name, 451 - whiteWidth / 2, 300 - animPotionY + 95);
             } else if (animPhase == 5) {
                 // Apply transforms
                 int cx = (int) animCurrentX + 40;
