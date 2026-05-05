@@ -260,3 +260,10 @@ After that, the cauldron looks like it was moved down. Can we put it back to whe
 # Results
 Cauldron is fixed! Apparently when the navigation bar was removed for the Start Screen, the game window calculated its total height without the buttons at the bottom. When Start was clicked and the buttons suddenly appeared, the game window didn't get bigger—instead, it squished the main game area (the Brewing Room) upwards by about 40 pixels to make room for them! This made the bottom of the cauldron get cut off, giving the illusion that it had moved downwards.
 
+# Prompt 34
+Okay I changed my mind, can we have the spawning of ingredients even if the player is not in that room, but if the player is not in the room, it is a slower rate of spawning?
+# Results
+
+# Prompt 35
+When you try to add a rare crystal as an ingredient, do not use it up if the mixture is invalid.
+# Results

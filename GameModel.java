@@ -294,6 +294,17 @@ public class GameModel {
             lastBrewWasNewDiscovery = discoveredPotions.add(lastBrewedPotion);
         } else {
             lastBrewWasNewDiscovery = false;
+            // Refund rare crystals if the mixture was invalid
+            if (ingredient1 == Ingredient.RARE_CRYSTAL_FOREST || 
+                ingredient1 == Ingredient.RARE_CRYSTAL_CAVE || 
+                ingredient1 == Ingredient.RARE_CRYSTAL_MOUNTAIN) {
+                addIngredient(ingredient1);
+            }
+            if (ingredient2 == Ingredient.RARE_CRYSTAL_FOREST || 
+                ingredient2 == Ingredient.RARE_CRYSTAL_CAVE || 
+                ingredient2 == Ingredient.RARE_CRYSTAL_MOUNTAIN) {
+                addIngredient(ingredient2);
+            }
         }
         
         return lastBrewedPotion;

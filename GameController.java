@@ -143,30 +143,54 @@ public class GameController {
         // Every 4 seconds, staggered by 1.3 seconds per room
         int interval = 4000;
 
+        int[] forestTick = {0};
         forestTimer = new Timer(interval, e -> {
             if (model.getCurrentRoom() == GameModel.Room.FOREST) {
                 model.spawnForRoom(GameModel.Room.FOREST);
                 view.repaint();
+                forestTick[0] = 0;
+            } else {
+                forestTick[0]++;
+                if (forestTick[0] >= 3) {
+                    model.spawnForRoom(GameModel.Room.FOREST);
+                    forestTick[0] = 0;
+                }
             }
         });
         forestTimer.setInitialDelay(0);
         forestTimer.setRepeats(true);
         forestTimer.start();
 
+        int[] caveTick = {0};
         caveTimer = new Timer(interval, e -> {
             if (model.getCurrentRoom() == GameModel.Room.CAVE) {
                 model.spawnForRoom(GameModel.Room.CAVE);
                 view.repaint();
+                caveTick[0] = 0;
+            } else {
+                caveTick[0]++;
+                if (caveTick[0] >= 3) {
+                    model.spawnForRoom(GameModel.Room.CAVE);
+                    caveTick[0] = 0;
+                }
             }
         });
         caveTimer.setInitialDelay(1333);
         caveTimer.setRepeats(true);
         caveTimer.start();
 
+        int[] mountainTick = {0};
         mountainTimer = new Timer(interval, e -> {
             if (model.getCurrentRoom() == GameModel.Room.MOUNTAIN) {
                 model.spawnForRoom(GameModel.Room.MOUNTAIN);
                 view.repaint();
+                mountainTick[0] = 0;
+            } else {
+                mountainTick[0]++;
+                if (mountainTick[0] >= 3) {
+                    model.spawnForRoom(GameModel.Room.MOUNTAIN);
+                    mountainTick[0] = 0;
+                }
             }
         });
         mountainTimer.setInitialDelay(2666);
