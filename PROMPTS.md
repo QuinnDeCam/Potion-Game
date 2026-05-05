@@ -235,6 +235,7 @@ Looks a little funny, but did what I meant to.
 
 # Prompt 30
 Can the yellow label that says "New discovery" or "Unknown mixture" be above the selected ingredients?
+# Results
 Sucessfull!
 
 # Prompt 31
@@ -263,12 +264,14 @@ Cauldron is fixed! Apparently when the navigation bar was removed for the Start 
 # Prompt 34
 Okay I changed my mind, can we have the spawning of ingredients even if the player is not in that room, but if the player is not in the room, it is a slower rate of spawning?
 # Results
+Way nicer game play, I did enjoy being able to stock up on ingredients while chilling in a room, but the slower background spawning makes it a lot more doable. 
 
 # Prompt 35
 When you try to add a rare crystal as an ingredient, do not use it up if the mixture is invalid.
 # Results
 That works, after a rare crystal is not used once, it is regenerated. 
 
-Attempting to combine three rare cyrstals together crashed the game both times I tested it, and re did it. So I decided to just remove them.
 # Prompt 36
-"Can you just get rid of the rare crystals?  
+Can you just get rid of the rare crystals?  
+# Results
+Attempting to combine three rare cyrstals together crashed the game both times I tested it, and re did it. So I decided to just remove them. Sucessfully removed the rare crystals ...and the Spicy water.... :(
