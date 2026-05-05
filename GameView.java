@@ -58,9 +58,6 @@ public class GameView extends JPanel {
     private Image caveImg;
     private Image mountainImg;
     private Image bubbleImg;
-    private Image rareForestImg;
-    private Image rareCaveImg;
-    private Image rareMountainImg;
 
     public GameView(GameModel model) {
         this.model = model;
@@ -73,19 +70,16 @@ public class GameView extends JPanel {
         invBoundsMap.put(GameModel.Ingredient.TREE_SAP, new Rectangle(20, 80, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.FROG, new Rectangle(20, 180, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.LEAF, new Rectangle(20, 280, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_FOREST, new Rectangle(20, 380, 50, 50));
 
         // Middle Column: Cave (x=90)
         invBoundsMap.put(GameModel.Ingredient.MUSHROOM, new Rectangle(90, 80, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.BUG, new Rectangle(90, 180, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.CRYSTAL, new Rectangle(90, 280, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_CAVE, new Rectangle(90, 380, 50, 50));
 
         // Right Column: Mountain (x=160)
         invBoundsMap.put(GameModel.Ingredient.ICE, new Rectangle(160, 80, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.PEBBLE, new Rectangle(160, 180, 50, 50));
         invBoundsMap.put(GameModel.Ingredient.FUR, new Rectangle(160, 280, 50, 50));
-        invBoundsMap.put(GameModel.Ingredient.RARE_CRYSTAL_MOUNTAIN, new Rectangle(160, 380, 50, 50));
 
         // Setup UI
         setupBrewingUI();
@@ -106,9 +100,6 @@ public class GameView extends JPanel {
         caveImg = new ImageIcon("images/Cave.png").getImage();
         mountainImg = new ImageIcon("images/Mountain.png").getImage();
         bubbleImg = new ImageIcon("images/Bubble.png").getImage();
-        rareForestImg = new ImageIcon("images/Pink.png").getImage();
-        rareCaveImg = new ImageIcon("images/Orange.png").getImage();
-        rareMountainImg = new ImageIcon("images/Blue.png").getImage();
     }
 
     public Rectangle getJournalButtonBounds() {
@@ -129,7 +120,7 @@ public class GameView extends JPanel {
             { 0, 1, 2, 3, 4, 4, 5, 5, 1, 0 },
             { 1, 3, 2, 4, 4, 4, 5, 5, 5, 1 },
             { 1, 3, 3, 4, 5, 5, 5, 5, 5, 1 },
-            { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            { 0, 1, 1, 1, 1, 1, 1, 1, 1, 0 }
     };
 
     private void drawPotionIcon(Graphics g, GameModel.Potion potion, int x, int y, int pixelSize) {
@@ -138,31 +129,123 @@ public class GameView extends JPanel {
         Color darkColor = new Color(50, 50, 50);
 
         switch (potion) {
-            case STICKY_LIQUID: brightColor=new Color(255,200,0); midColor=new Color(200,150,0); darkColor=new Color(150,100,0); break;
-            case TINY_VIAL: brightColor=new Color(150,200,255); midColor=new Color(100,150,200); darkColor=new Color(50,100,150); break;
-            case MUDDLED_MIXTURE: brightColor=new Color(139,101,8); midColor=new Color(100,70,0); darkColor=new Color(60,40,0); break;
-            case HEAVY_POTION: brightColor=new Color(120,120,120); midColor=new Color(80,80,80); darkColor=new Color(40,40,40); break;
-            case NIGHT_VISION_POTION: brightColor=new Color(100,255,100); midColor=new Color(50,200,50); darkColor=new Color(0,150,0); break;
-            case GLOW_POTION: brightColor=new Color(0,255,255); midColor=new Color(0,200,200); darkColor=new Color(0,150,150); break;
-            case FUZZY_POTION: brightColor=new Color(255,150,50); midColor=new Color(200,100,0); darkColor=new Color(150,50,0); break;
-            case BUG_JUICE: brightColor=new Color(200,50,200); midColor=new Color(150,0,150); darkColor=new Color(100,0,100); break;
-            case FRIEND_POTION: brightColor=new Color(255,150,200); midColor=new Color(255,100,150); darkColor=new Color(200,50,100); break;
-            case SPECIAL_FRIEND_POTION: brightColor=new Color(255,50,150); midColor=new Color(200,0,100); darkColor=new Color(150,0,50); break;
-            case SPICY_WATER: brightColor=new Color(255,50,50); midColor=new Color(200,0,0); darkColor=new Color(150,0,0); break;
-            case HOPPING_TONIC: brightColor=new Color(150,255,50); midColor=new Color(100,200,0); darkColor=new Color(50,150,0); break;
-            case LEAF_JUICE: brightColor=new Color(50,200,50); midColor=new Color(0,150,0); darkColor=new Color(0,100,0); break;
-            case SPIDERMANS_BREW: brightColor=new Color(255,0,0); midColor=new Color(150,0,0); darkColor=new Color(0,0,150); break;
-            case ALLERGIC_REACTION_IN_A_BOTTLE: brightColor=new Color(200,255,0); midColor=new Color(150,200,0); darkColor=new Color(100,150,0); break;
-            case GROWING_POTION: brightColor=new Color(0,255,100); midColor=new Color(0,200,50); darkColor=new Color(0,150,0); break;
-            case RAMUNE: brightColor=new Color(200,255,255); midColor=new Color(150,200,255); darkColor=new Color(100,150,200); break;
-            case ROCKS_ON_THE_ROCKS: brightColor=new Color(255,255,255); midColor=new Color(200,200,200); darkColor=new Color(150,150,150); break;
-            case COLD_BLOODED: brightColor=new Color(50,100,255); midColor=new Color(0,50,200); darkColor=new Color(0,0,150); break;
-            case DRUG_DOSE: brightColor=new Color(150,0,255); midColor=new Color(100,0,200); darkColor=new Color(50,0,150); break;
-            case SPECKLED_SKIN_SERUM: brightColor=new Color(255,255,100); midColor=new Color(200,200,50); darkColor=new Color(150,150,0); break;
-            case GLASS_SKIN_SERUM: brightColor=new Color(220,255,220); midColor=new Color(180,220,180); darkColor=new Color(150,200,150); break;
-            case YELLOW_SNOW_CONE_CONCOCTION: brightColor=new Color(255,255,0); midColor=new Color(200,200,0); darkColor=new Color(150,150,0); break;
-            case WATER: brightColor=new Color(100,150,255); midColor=new Color(50,100,200); darkColor=new Color(0,50,150); break;
-            default: break; // Unknown remains gray
+            case STICKY_LIQUID:
+                brightColor = new Color(255, 200, 0);
+                midColor = new Color(200, 150, 0);
+                darkColor = new Color(150, 100, 0);
+                break;
+            case TINY_VIAL:
+                brightColor = new Color(150, 200, 255);
+                midColor = new Color(100, 150, 200);
+                darkColor = new Color(50, 100, 150);
+                break;
+            case MUDDLED_MIXTURE:
+                brightColor = new Color(139, 101, 8);
+                midColor = new Color(100, 70, 0);
+                darkColor = new Color(60, 40, 0);
+                break;
+            case HEAVY_POTION:
+                brightColor = new Color(120, 120, 120);
+                midColor = new Color(80, 80, 80);
+                darkColor = new Color(40, 40, 40);
+                break;
+            case NIGHT_VISION_POTION:
+                brightColor = new Color(100, 255, 100);
+                midColor = new Color(50, 200, 50);
+                darkColor = new Color(0, 150, 0);
+                break;
+            case GLOW_POTION:
+                brightColor = new Color(0, 255, 255);
+                midColor = new Color(0, 200, 200);
+                darkColor = new Color(0, 150, 150);
+                break;
+            case FUZZY_POTION:
+                brightColor = new Color(255, 150, 50);
+                midColor = new Color(200, 100, 0);
+                darkColor = new Color(150, 50, 0);
+                break;
+            case BUG_JUICE:
+                brightColor = new Color(200, 50, 200);
+                midColor = new Color(150, 0, 150);
+                darkColor = new Color(100, 0, 100);
+                break;
+            case FRIEND_POTION:
+                brightColor = new Color(255, 150, 200);
+                midColor = new Color(255, 100, 150);
+                darkColor = new Color(200, 50, 100);
+                break;
+            case SPECIAL_FRIEND_POTION:
+                brightColor = new Color(255, 50, 150);
+                midColor = new Color(200, 0, 100);
+                darkColor = new Color(150, 0, 50);
+                break;
+            case HOPPING_TONIC:
+                brightColor = new Color(150, 255, 50);
+                midColor = new Color(100, 200, 0);
+                darkColor = new Color(50, 150, 0);
+                break;
+            case LEAF_JUICE:
+                brightColor = new Color(50, 200, 50);
+                midColor = new Color(0, 150, 0);
+                darkColor = new Color(0, 100, 0);
+                break;
+            case SPIDERMANS_BREW:
+                brightColor = new Color(255, 0, 0);
+                midColor = new Color(150, 0, 0);
+                darkColor = new Color(0, 0, 150);
+                break;
+            case ALLERGIC_REACTION_IN_A_BOTTLE:
+                brightColor = new Color(200, 255, 0);
+                midColor = new Color(150, 200, 0);
+                darkColor = new Color(100, 150, 0);
+                break;
+            case GROWING_POTION:
+                brightColor = new Color(0, 255, 100);
+                midColor = new Color(0, 200, 50);
+                darkColor = new Color(0, 150, 0);
+                break;
+            case RAMUNE:
+                brightColor = new Color(200, 255, 255);
+                midColor = new Color(150, 200, 255);
+                darkColor = new Color(100, 150, 200);
+                break;
+            case ROCKS_ON_THE_ROCKS:
+                brightColor = new Color(255, 255, 255);
+                midColor = new Color(200, 200, 200);
+                darkColor = new Color(150, 150, 150);
+                break;
+            case COLD_BLOODED:
+                brightColor = new Color(50, 100, 255);
+                midColor = new Color(0, 50, 200);
+                darkColor = new Color(0, 0, 150);
+                break;
+            case DRUG_DOSE:
+                brightColor = new Color(150, 0, 255);
+                midColor = new Color(100, 0, 200);
+                darkColor = new Color(50, 0, 150);
+                break;
+            case SPECKLED_SKIN_SERUM:
+                brightColor = new Color(255, 255, 100);
+                midColor = new Color(200, 200, 50);
+                darkColor = new Color(150, 150, 0);
+                break;
+            case GLASS_SKIN_SERUM:
+                brightColor = new Color(220, 255, 220);
+                midColor = new Color(180, 220, 180);
+                darkColor = new Color(150, 200, 150);
+                break;
+            case YELLOW_SNOW_CONE_CONCOCTION:
+                brightColor = new Color(255, 255, 0);
+                midColor = new Color(200, 200, 0);
+                darkColor = new Color(150, 150, 0);
+                break;
+            case WATER:
+                brightColor = new Color(100, 150, 255);
+                midColor = new Color(50, 100, 200);
+                darkColor = new Color(0, 50, 150);
+                break;
+            default:
+                break; // Unknown remains gray
         }
 
         Color[] palette = {
@@ -215,7 +298,7 @@ public class GameView extends JPanel {
     public void updateUIVisibility(GameModel.Room currentRoom) {
         boolean isBrewing = (currentRoom == GameModel.Room.BREWING_ROOM) && !model.isJournalOpen();
         boolean isStart = (currentRoom == GameModel.Room.START_SCREEN);
-        
+
         if (brewButton != null) {
             brewButton.setVisible(isBrewing);
             if (model.hasWon()) {
@@ -443,11 +526,26 @@ public class GameView extends JPanel {
     private Rectangle prevPageBounds = new Rectangle();
     private Rectangle nextPageBounds = new Rectangle();
 
-    public Rectangle getPrevPageBounds() { return prevPageBounds; }
-    public Rectangle getNextPageBounds() { return nextPageBounds; }
-    public void nextPage() { journalPage++; }
-    public void prevPage() { if (journalPage > 0) journalPage--; }
-    public void setJournalPage(int p) { journalPage = p; }
+    public Rectangle getPrevPageBounds() {
+        return prevPageBounds;
+    }
+
+    public Rectangle getNextPageBounds() {
+        return nextPageBounds;
+    }
+
+    public void nextPage() {
+        journalPage++;
+    }
+
+    public void prevPage() {
+        if (journalPage > 0)
+            journalPage--;
+    }
+
+    public void setJournalPage(int p) {
+        journalPage = p;
+    }
 
     private void drawJournalOverlay(Graphics g) {
         // Semi-transparent background
@@ -461,9 +559,9 @@ public class GameView extends JPanel {
         g.setColor(new Color(139, 69, 19)); // Dark brown border
         g.drawRect(jx, jy, jw, jh);
         g.drawRect(jx + 2, jy + 2, jw - 4, jh - 4);
-        
+
         // Draw center spine line
-        g.drawLine(jx + jw/2, jy, jx + jw/2, jy + jh);
+        g.drawLine(jx + jw / 2, jy, jx + jw / 2, jy + jh);
 
         // Title
         g.setFont(new Font("Georgia", Font.BOLD, 24));
@@ -474,10 +572,10 @@ public class GameView extends JPanel {
         int totalPotions = model.getTotalDiscoverablePotions();
 
         g.setFont(new Font("Georgia", Font.ITALIC, 16));
-        g.drawString("Discovered: " + discoveredSet.size() + " of " + totalPotions, jx + jw/2 + 40, jy + 40);
+        g.drawString("Discovered: " + discoveredSet.size() + " of " + totalPotions, jx + jw / 2 + 40, jy + 40);
 
         int itemsPerPage = 10; // 5 per column
-        
+
         // Collect valid potions
         java.util.List<GameModel.Potion> allPotions = new java.util.ArrayList<>();
         for (GameModel.Potion p : GameModel.Potion.values()) {
@@ -485,24 +583,26 @@ public class GameView extends JPanel {
                 allPotions.add(p);
             }
         }
-        
-        int totalPages = (int)Math.ceil((double)allPotions.size() / itemsPerPage);
-        if (journalPage >= totalPages) journalPage = totalPages - 1;
-        if (journalPage < 0) journalPage = 0;
-        
+
+        int totalPages = (int) Math.ceil((double) allPotions.size() / itemsPerPage);
+        if (journalPage >= totalPages)
+            journalPage = totalPages - 1;
+        if (journalPage < 0)
+            journalPage = 0;
+
         int startIdx = journalPage * itemsPerPage;
         int endIdx = Math.min(startIdx + itemsPerPage, allPotions.size());
-        
+
         int col1X = jx + 30;
-        int col2X = jx + jw/2 + 30;
-        
+        int col2X = jx + jw / 2 + 30;
+
         for (int i = startIdx; i < endIdx; i++) {
             GameModel.Potion p = allPotions.get(i);
             boolean isCol2 = (i - startIdx) >= 5;
             int drawX = isCol2 ? col2X : col1X;
             int itemIdx = (i - startIdx) % 5;
             int drawY = jy + 80 + (itemIdx * 75); // Vertical space between items
-            
+
             String potionName = p.name().toLowerCase().replace("_", " ");
             potionName = potionName.substring(0, 1).toUpperCase() + potionName.substring(1);
 
@@ -524,9 +624,9 @@ public class GameView extends JPanel {
                 g.setFont(new Font("Georgia", Font.ITALIC, 12));
                 GameModel.Ingredient[] recipe = model.getRecipe(p);
                 if (recipe != null && recipe.length >= 2) {
-                    String ing1 = recipe[0].name().toLowerCase().replace("rare_", "").replace("_forest", "").replace("_cave", "").replace("_mountain", "").replace("_", " ");
+                    String ing1 = recipe[0].name().toLowerCase().replace("_", " ");
                     ing1 = ing1.substring(0, 1).toUpperCase() + ing1.substring(1);
-                    String ing2 = recipe[1].name().toLowerCase().replace("rare_", "").replace("_forest", "").replace("_cave", "").replace("_mountain", "").replace("_", " ");
+                    String ing2 = recipe[1].name().toLowerCase().replace("_", " ");
                     ing2 = ing2.substring(0, 1).toUpperCase() + ing2.substring(1);
                     g.drawString("Recipe: " + ing1 + " + " + ing2, drawX + 45, drawY + 28);
                 }
@@ -541,11 +641,11 @@ public class GameView extends JPanel {
                 g.drawString("Recipe: ? + ?", drawX + 45, drawY + 28);
             }
         }
-        
+
         // Draw pagination arrows
         prevPageBounds.setBounds(jx + 20, jy + jh - 40, 70, 30);
         nextPageBounds.setBounds(jx + jw - 90, jy + jh - 40, 70, 30);
-        
+
         if (journalPage > 0) {
             g.setColor(new Color(139, 69, 19));
             g.fillRect(prevPageBounds.x, prevPageBounds.y, prevPageBounds.width, prevPageBounds.height);
@@ -553,7 +653,7 @@ public class GameView extends JPanel {
             g.setFont(new Font("Arial", Font.BOLD, 14));
             g.drawString("< Prev", prevPageBounds.x + 10, prevPageBounds.y + 20);
         }
-        
+
         if (journalPage < totalPages - 1) {
             g.setColor(new Color(139, 69, 19));
             g.fillRect(nextPageBounds.x, nextPageBounds.y, nextPageBounds.width, nextPageBounds.height);
@@ -561,11 +661,11 @@ public class GameView extends JPanel {
             g.setFont(new Font("Arial", Font.BOLD, 14));
             g.drawString("Next >", nextPageBounds.x + 10, nextPageBounds.y + 20);
         }
-        
+
         // Draw page indicator
         g.setColor(Color.BLACK);
         g.setFont(new Font("Georgia", Font.PLAIN, 14));
-        g.drawString("Page " + (journalPage + 1) + " of " + totalPages, jx + jw/2 - 35, jy + jh - 20);
+        g.drawString("Page " + (journalPage + 1) + " of " + totalPages, jx + jw / 2 - 35, jy + jh - 20);
     }
 
     private String getRoomDisplayName(GameModel.Room room) {
@@ -622,11 +722,11 @@ public class GameView extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         String[] instructions = {
-            "You are an ambitious alchemist, on a quest to reach your full potential and discover",
-            "all possible magical ingredients that help you make every potion recipe you can!",
-            "",
-            "Travel to the Forest, Cave, and Mountain to collect ingredients that spawn over time.",
-            "Combine them in the Brewing Room to discover new potions and fill your Journal!"
+                "You are an ambitious alchemist, on a quest to reach your full potential and discover",
+                "all possible magical ingredients that help you make every potion recipe you can!",
+                "",
+                "Travel to the Forest, Cave, and Mountain to collect ingredients that spawn over time.",
+                "Combine them in the Brewing Room to discover new potions and fill your Journal!"
         };
 
         int y = 250;
@@ -765,29 +865,6 @@ public class GameView extends JPanel {
                 }
                 break;
 
-            case RARE_CRYSTAL_FOREST:
-                if (rareForestImg != null && rareForestImg.getWidth(null) > 0) {
-                    g.drawImage(rareForestImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
-                } else {
-                    drawTintedCrystal(g, bounds, new Color(255, 117, 177, 150)); // Pink
-                }
-                break;
-
-            case RARE_CRYSTAL_CAVE:
-                if (rareCaveImg != null && rareCaveImg.getWidth(null) > 0) {
-                    g.drawImage(rareCaveImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
-                } else {
-                    drawTintedCrystal(g, bounds, new Color(255, 142, 13, 150)); // Orange
-                }
-                break;
-
-            case RARE_CRYSTAL_MOUNTAIN:
-                if (rareMountainImg != null && rareMountainImg.getWidth(null) > 0) {
-                    g.drawImage(rareMountainImg, bounds.x, bounds.y, bounds.width, bounds.height, this);
-                } else {
-                    drawTintedCrystal(g, bounds, new Color(58, 134, 189, 150)); // Blue
-                }
-                break;
         }
 
         if (showLabel) {
@@ -800,25 +877,6 @@ public class GameView extends JPanel {
             g.drawString(name, bounds.x + 5, bounds.y - 5);
         }
     }
-
-    private void drawTintedCrystal(Graphics g, Rectangle bounds, Color tint) {
-        if (crystalImg != null && crystalImg.getWidth(null) > 0) {
-            BufferedImage img = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = img.createGraphics();
-            g2.drawImage(crystalImg, 0, 0, bounds.width, bounds.height, null);
-            g2.setComposite(AlphaComposite.SrcAtop);
-            g2.setColor(tint);
-            g2.fillRect(0, 0, bounds.width, bounds.height);
-            g2.dispose();
-            g.drawImage(img, bounds.x, bounds.y, null);
-        } else {
-            // Fallback geometry
-            g.setColor(new Color(tint.getRed(), tint.getGreen(), tint.getBlue())); // solid color
-            g.fillRect(bounds.x + 10, bounds.y + 10, bounds.width - 20, bounds.height - 20);
-        }
-    }
-
-    // Removed ingredient cupboard
 
     private void drawBrewingRoom(Graphics g) {
         // Draw cauldron image
@@ -880,7 +938,7 @@ public class GameView extends JPanel {
                     int yellowWidth = fmYellow.stringWidth("New Discovery!");
                     g2d.drawString("New Discovery!", 451 - yellowWidth / 2, 300 - animPotionY - 20);
                 }
-                
+
                 // Text to show what it is
                 g2d.setColor(Color.WHITE);
                 g2d.setFont(new Font("Arial", Font.BOLD, 12));

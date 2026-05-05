@@ -267,3 +267,8 @@ Okay I changed my mind, can we have the spawning of ingredients even if the play
 # Prompt 35
 When you try to add a rare crystal as an ingredient, do not use it up if the mixture is invalid.
 # Results
+That works, after a rare crystal is not used once, it is regenerated. 
+
+Attempting to combine three rare cyrstals together crashed the game both times I tested it, and re did it. So I decided to just remove them.
+# Prompt 36
+"Can you just get rid of the rare crystals?  

@@ -39,10 +39,7 @@ public class GameModel {
         FROG,
         ICE,
         PEBBLE,
-        FUR,
-        RARE_CRYSTAL_FOREST,
-        RARE_CRYSTAL_CAVE,
-        RARE_CRYSTAL_MOUNTAIN
+        FUR
     }
     
     // Potion types
@@ -57,7 +54,6 @@ public class GameModel {
         BUG_JUICE,
         FRIEND_POTION,
         SPECIAL_FRIEND_POTION,
-        SPICY_WATER,
         HOPPING_TONIC,
         LEAF_JUICE,
         SPIDERMANS_BREW,
@@ -122,10 +118,6 @@ public class GameModel {
         spawnChances.put(Ingredient.PEBBLE, 3);
         spawnChances.put(Ingredient.FUR, 8);
         
-        spawnChances.put(Ingredient.RARE_CRYSTAL_FOREST, 32);
-        spawnChances.put(Ingredient.RARE_CRYSTAL_CAVE, 32);
-        spawnChances.put(Ingredient.RARE_CRYSTAL_MOUNTAIN, 32);
-        
         activeIngredientsByRoom.put(Room.FOREST, new ArrayList<>());
         activeIngredientsByRoom.put(Room.CAVE, new ArrayList<>());
         activeIngredientsByRoom.put(Room.MOUNTAIN, new ArrayList<>());
@@ -184,11 +176,11 @@ public class GameModel {
         Ingredient[] validTypes;
         
         if (room == Room.FOREST) {
-            validTypes = new Ingredient[]{Ingredient.LEAF, Ingredient.TREE_SAP, Ingredient.FROG, Ingredient.RARE_CRYSTAL_FOREST};
+            validTypes = new Ingredient[]{Ingredient.LEAF, Ingredient.TREE_SAP, Ingredient.FROG};
         } else if (room == Room.CAVE) {
-            validTypes = new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG, Ingredient.RARE_CRYSTAL_CAVE};
+            validTypes = new Ingredient[]{Ingredient.MUSHROOM, Ingredient.CRYSTAL, Ingredient.BUG};
         } else if (room == Room.MOUNTAIN) {
-            validTypes = new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE, Ingredient.FUR, Ingredient.RARE_CRYSTAL_MOUNTAIN};
+            validTypes = new Ingredient[]{Ingredient.ICE, Ingredient.PEBBLE, Ingredient.FUR};
         } else {
             return;
         }
@@ -257,9 +249,6 @@ public class GameModel {
             lastBrewedPotion = Potion.FRIEND_POTION;
         } else if (matches(ingredient1, ingredient2, Ingredient.CRYSTAL, Ingredient.FUR)) {
             lastBrewedPotion = Potion.SPECIAL_FRIEND_POTION;
-        } else if (matches(ingredient1, ingredient2, Ingredient.ICE, Ingredient.RARE_CRYSTAL_CAVE)) {
-            lastBrewedPotion = Potion.SPICY_WATER;
-        } else if (matches(ingredient1, ingredient2, Ingredient.FROG, Ingredient.FROG)) {
             lastBrewedPotion = Potion.HOPPING_TONIC;
         } else if (matches(ingredient1, ingredient2, Ingredient.LEAF, Ingredient.LEAF)) {
             lastBrewedPotion = Potion.LEAF_JUICE;
@@ -294,17 +283,6 @@ public class GameModel {
             lastBrewWasNewDiscovery = discoveredPotions.add(lastBrewedPotion);
         } else {
             lastBrewWasNewDiscovery = false;
-            // Refund rare crystals if the mixture was invalid
-            if (ingredient1 == Ingredient.RARE_CRYSTAL_FOREST || 
-                ingredient1 == Ingredient.RARE_CRYSTAL_CAVE || 
-                ingredient1 == Ingredient.RARE_CRYSTAL_MOUNTAIN) {
-                addIngredient(ingredient1);
-            }
-            if (ingredient2 == Ingredient.RARE_CRYSTAL_FOREST || 
-                ingredient2 == Ingredient.RARE_CRYSTAL_CAVE || 
-                ingredient2 == Ingredient.RARE_CRYSTAL_MOUNTAIN) {
-                addIngredient(ingredient2);
-            }
         }
         
         return lastBrewedPotion;
@@ -330,7 +308,6 @@ public class GameModel {
             case BUG_JUICE: return new Ingredient[]{Ingredient.BUG, Ingredient.BUG};
             case FRIEND_POTION: return new Ingredient[]{Ingredient.PEBBLE, Ingredient.FUR};
             case SPECIAL_FRIEND_POTION: return new Ingredient[]{Ingredient.CRYSTAL, Ingredient.FUR};
-            case SPICY_WATER: return new Ingredient[]{Ingredient.ICE, Ingredient.RARE_CRYSTAL_CAVE};
             case HOPPING_TONIC: return new Ingredient[]{Ingredient.FROG, Ingredient.FROG};
             case LEAF_JUICE: return new Ingredient[]{Ingredient.LEAF, Ingredient.LEAF};
             case SPIDERMANS_BREW: return new Ingredient[]{Ingredient.BUG, Ingredient.TREE_SAP};
